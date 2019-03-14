@@ -5,3 +5,4 @@ export { default as ExtraHeader } from './ExtraHeader';
 export { default as Content } from './Content';
 export { default as Row } from './Row';
 export { default as Button } from './Button';
+export { default as Input } from './Input';

@@ -1,6 +1,8 @@
 // @flow
 const colors: { [key: string]: string | Array<string> } = {
-  defaultBackgroundColor: 'white',
+  defaultBackgroundColor: '#e8ecf1',
+  contentBackground: '#ffffff',
+  secondaryLinearGradient: ['#ffffff', '#F2F2F2'],
   white: 'white',
   primaryColor: '#2574a9',
   lightPrimaryColor: '#b3e5fc',
@@ -31,6 +33,7 @@ const colors: { [key: string]: string | Array<string> } = {
   greensea: '#16a085',
   loadingBackground: '#b3e5fc',
   seperator: '#F1F1F1',
-  gradient: ['#b3e5fc', '#2574a9']
+  gradient: ['#b3e5fc', '#2574a9'],
+  lemon: '#f7ca18'
 };
 export default colors;

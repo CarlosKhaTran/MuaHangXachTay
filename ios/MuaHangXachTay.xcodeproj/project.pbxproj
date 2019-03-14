@@ -52,6 +52,10 @@
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2EB5C879208A45DB8140556B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8DADD74A4C848789CB811CC /* Montserrat-Regular.ttf */; };
 		31386EF6743047B88C1976A6 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BFAEF82BD434B478688BF31 /* Ionicons.ttf */; };
+		316D7DFA22394E10006740B4 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 316D7DF922394E10006740B4 /* RSKImageCropper.framework */; };
+		316D7DFB22394E10006740B4 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 316D7DF922394E10006740B4 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		316D7DFD22394E10006740B4 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 316D7DFC22394E10006740B4 /* QBImagePicker.framework */; };
+		316D7DFE22394E10006740B4 /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 316D7DFC22394E10006740B4 /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		31C83429222D2A480081F2CE /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31E68AB8222C1EA7000E3A70 /* Lottie.framework */; };
 		31C8342A222D2A480081F2CE /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 31E68AB8222C1EA7000E3A70 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		31E68ABF222C1F99000E3A70 /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31E68AB8222C1EA7000E3A70 /* Lottie.framework */; };
@@ -485,6 +489,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				31C8342A222D2A480081F2CE /* Lottie.framework in Embed Frameworks */,
+				316D7DFB22394E10006740B4 /* RSKImageCropper.framework in Embed Frameworks */,
+				316D7DFE22394E10006740B4 /* QBImagePicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,6 +528,8 @@
 		2D02E47B1E0B4A5D006451C7 /* MuaHangXachTay-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MuaHangXachTay-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* MuaHangXachTay-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MuaHangXachTay-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		316D7DF922394E10006740B4 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		316D7DFC22394E10006740B4 /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32CD58707EE04CF88FC8F90A /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-LightItalic.ttf"; path = "../src/assets/fonts/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
 		3375DAA19CBA41CEA7B26E64 /* RobotoCondensed-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoCondensed-Bold.ttf"; path = "../src/assets/fonts/RobotoCondensed-Bold.ttf"; sourceTree = "<group>"; };
 		35377939CD2D416AA3C74F44 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
@@ -623,11 +631,13 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				316D7DFD22394E10006740B4 /* QBImagePicker.framework in Frameworks */,
 				2DC3408E382C408FBC99EEC8 /* libLottieReactNative.a in Frameworks */,
 				C2A113DAC5384AC182DDBD1B /* libLottie.a in Frameworks */,
 				9EB1D977F8C048D6B1D5B8B2 /* libRNVectorIcons.a in Frameworks */,
 				447C37F637984BE897C20A03 /* libBVLinearGradient.a in Frameworks */,
 				A9F5184FEB1F4F109643A297 /* libimageCropPicker.a in Frameworks */,
+				316D7DFA22394E10006740B4 /* RSKImageCropper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,6 +921,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				316D7DFC22394E10006740B4 /* QBImagePicker.framework */,
+				316D7DF922394E10006740B4 /* RSKImageCropper.framework */,
 				13B07FAE1A68108700A75B9A /* MuaHangXachTay */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* MuaHangXachTayTests */,
@@ -1844,6 +1856,7 @@
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = MuaHangXachTay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1879,6 +1892,7 @@
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = MuaHangXachTay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

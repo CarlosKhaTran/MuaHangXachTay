@@ -19,7 +19,13 @@ export default createAppContainer(createFluidNavigator(
     },
     [SCREENS.NOTIFICATION]: {
       screen: pages.Notification,
-    }
+    },
+    [SCREENS.ADMIN_LOGIN]: {
+      screen: pages.AdminLogin,
+    },
+    [SCREENS.ADMIN]: {
+      screen: pages.Admin,
+    },
   },
   {
     headerMode: 'none',

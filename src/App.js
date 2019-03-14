@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import { AppState, DeviceEventEmitter } from 'react-native';
+import { Notify } from './Components/Global';
 import Initial from './routers';
 
 type Props = {};
@@ -35,7 +36,7 @@ export default class App extends Component<Props, State> {
 
   render() {
     return (
-      <Initial />
+      [<Initial key="main" />, <Notify.Component key="notify" />]
     );
   }
 }

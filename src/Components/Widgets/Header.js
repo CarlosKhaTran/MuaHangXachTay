@@ -19,6 +19,7 @@ import { measures, colors, defaultStyles } from '../../assets';
 type Props = {
   handleLeftButton?: ?Function,
   handleRightButton?: ?Function,
+  handleSecretAction?: ?Function,
   title?: ?string,
   leftIcon?: ?React$Node,
   rightIcon?: ?React$Node,
@@ -27,6 +28,7 @@ type Props = {
   onBlurSearch: ?Function,
   onChangeSearchText: Function,
   isTransparent: boolean,
+  anim?: boolean,
 };
 type State = {
   keyboardOpen: boolean,
@@ -39,7 +41,9 @@ export default class Header extends Component<Props, State> {
     handleRightButton: undefined,
     title: 'MISSING TITLE',
     leftIcon: undefined,
+    anim: false,
     rightIcon: undefined,
+    handleSecretAction: () => {},
   }
 
   state = {
@@ -114,7 +118,14 @@ export default class Header extends Component<Props, State> {
       handleRightButton,
       rightIcon,
       isTransparent,
+      handleSecretAction,
+      anim,
     } = this.props;
+    const titleText = (
+      <View style={styles.middle}>
+        <Text style={styles.title} onPress={handleSecretAction}>{title}</Text>
+      </View>
+    );
     return (
       <View
         source={require('../../assets/images/plane.png')}
@@ -151,11 +162,11 @@ export default class Header extends Component<Props, State> {
               </TouchableOpacity>
             )}
           </View>
-          <Transition appear="top">
-            <View style={styles.middle}>
-              <Text style={styles.title}>{title}</Text>
-            </View>
-          </Transition>
+          {anim ? (
+            <Transition appear="top">
+              {titleText}
+            </Transition>
+          ) : titleText}
           <View style={styles.right}>
             {handleRightButton && (
               <TouchableOpacity style={styles.leftButton} onPress={handleRightButton}>

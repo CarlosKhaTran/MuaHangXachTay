@@ -20,9 +20,9 @@ export default {
     shadowOpacity: 0.1,
     elevation: 2,
     borderRadius: measures.borderRadius,
-    shadowColor: colors.black,
+    shadowColor: colors.gray,
     shadowOffset: {
-      width: 0,
+      width: 1,
       height: 1,
     },
   },

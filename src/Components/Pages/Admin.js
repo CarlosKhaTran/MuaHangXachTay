@@ -22,87 +22,36 @@ type Props = {
   navigation: NavigationScreenProp<{}>,
 };
 type State = {
-  fullName: string,
-  phoneNumber: string,
-  address: string,
   itemName: string,
-  quantity: string,
-  date: string,
-  expectedPrice: string,
+  price: string,
   editEnabled: boolean,
   updateConfig: Object,
   image: ?{
     uri: string,
   },
-  loginAttempt: number,
 };
 
 const editConfig: any = {
-  fullName: {
-    name: 'fullName',
-    typeName: 'input',
-    defaultValue: '',
-  },
-  address: {
-    name: 'address',
-    typeName: 'input',
-    defaultValue: '',
-  },
-  phoneNumber: {
-    name: 'phoneNumber',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric',
-  },
   itemName: {
     name: 'itemName',
     typeName: 'input',
     defaultValue: '',
   },
-  quantity: {
-    name: 'quantity',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric',
-  },
-  date: {
-    name: 'date',
-    typeName: 'select',
-    options: [{
-      key: '1 tuần',
-      value: '1 tuần',
-    }, {
-      key: '2 tuần',
-      value: '2 tuần',
-    }, {
-      key: '3 tuần',
-      value: '3 tuần',
-    }, {
-      key: '1 tháng',
-      value: '1 tháng',
-    }]
-  },
-  expectedPrice: {
-    name: 'expectedPrice',
+  price: {
+    name: 'price',
     typeName: 'input',
     defaultValue: '',
     keyboardType: 'numeric',
   },
 };
 
-export default class ShoppingCart extends Component<Props, State> {
+export default class Admin extends Component<Props, State> {
   state = {
-    fullName: '',
-    phoneNumber: '',
     itemName: '',
-    quantity: '',
-    date: '',
-    expectedPrice: '',
-    address: '',
+    price: '',
+    image: null,
     editEnabled: false,
     updateConfig: {},
-    image: null,
-    loginAttempt: 0,
   }
 
   onEnableEdit = (infoName: string) => {
@@ -145,41 +94,17 @@ export default class ShoppingCart extends Component<Props, State> {
     });
   }
 
-  handleSecretAction = () => {
-    const { loginAttempt } = this.state;
-    const { navigation } = this.props;
-    if (loginAttempt === 10) {
-      this.setState({
-        loginAttempt: 0,
-      });
-      navigation.navigate({
-        routeName: SCREENS.ADMIN_LOGIN,
-        key: SCREENS.ADMIN_LOGIN,
-      });
-    } else {
-      this.setState({
-        loginAttempt: loginAttempt + 1,
-      });
-    }
-  }
-
   render() {
     const {
-      fullName,
-      phoneNumber,
       itemName,
-      quantity,
-      expectedPrice,
-      date,
+      price,
       updateConfig,
       editEnabled,
-      address,
       image,
     } = this.state;
     return (
       <Container>
         <Header
-          handleSecretAction={this.handleSecretAction}
           title="ĐƠN HÀNG"
           rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
           handleRightButton={this.onOpenNotification}
@@ -188,35 +113,6 @@ export default class ShoppingCart extends Component<Props, State> {
           <ExtraHeader />
           <ScrollView>
             <Transition appear="left">
-              <Content>
-                <Text style={styles.title}>THÔNG TIN CÁ NHÂN</Text>
-                <Row
-                  onPress={() => this.onEnableEdit('fullName')}
-                  first
-                  title="Họ tên"
-                  placeHolder="Nguyen Van A"
-                  value={fullName}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('fullName')}
-                  first
-                  title="Số Điện Thoại"
-                  placeHolder="0901000000"
-                  value={phoneNumber}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('address')}
-                  first
-                  title="Địa Chỉ (Không bắt buộc)"
-                  placeHolder="Số nhà/ Đường/ Huyện (Quận), ..."
-                  value={address}
-                  editEnabled
-                />
-              </Content>
-            </Transition>
-            <Transition appear="right">
               <Content>
                 <Text style={[styles.title, { marginTop: measures.marginMedium }]}>ĐƠN HÀNG</Text>
                 <Row
@@ -228,34 +124,11 @@ export default class ShoppingCart extends Component<Props, State> {
                   editEnabled
                 />
                 <Row
-                  onPress={() => this.onEnableEdit('quantity')}
+                  onPress={() => this.onEnableEdit('price')}
                   first
-                  title="Số lượng"
+                  title="Giá"
                   placeHolder=""
-                  value={quantity}
-                  editEnabled
-                />
-              </Content>
-            </Transition>
-            <Transition appear="left">
-              <Content>
-                <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
-                  THÔNG TIN BỔ SUNG (Không bắt buộc)
-                </Text>
-                <Row
-                  onPress={() => this.onEnableEdit('expectedPrice')}
-                  first
-                  title="Giá mong muốn"
-                  placeHolder=""
-                  value={expectedPrice}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('date')}
-                  first
-                  title="Thời gian giao hàng"
-                  placeHolder=""
-                  value={date}
+                  value={price}
                   editEnabled
                 />
               </Content>

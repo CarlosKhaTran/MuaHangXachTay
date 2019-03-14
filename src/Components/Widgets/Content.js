@@ -6,16 +6,19 @@ import { defaultStyles, measures, colors } from '../../assets';
 type Props = {
   children: React$Node,
   scrollable: boolean,
+  fill: boolean,
 }
 export default class Content extends React.PureComponent<Props> {
   render() {
-    const { children, scrollable } = this.props;
+    const { children, scrollable, fill } = this.props;
     return scrollable ? (
-      <ScrollView contentContainerStyle={[styles.content, { flex: undefined }]}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { flex: undefined }]}
+      >
         {children}
       </ScrollView>
     ) : (
-      <View style={styles.content}>
+      <View style={[styles.content, { flex: fill ? 1 : undefined }]}>
         {children}
       </View>
     );
@@ -28,7 +31,7 @@ const styles = StyleSheet.create({
     paddingBottom: measures.paddingMedium,
     marginHorizontal: measures.marginMedium,
     marginBottom: measures.marginMedium,
-    backgroundColor: colors.white,
+    backgroundColor: colors.contentBackground,
     ...defaultStyles.shadow,
   },
 });

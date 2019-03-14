@@ -44,7 +44,6 @@ export default class Button extends Component<Props> {
       case 'secondary':
         return {
           ...styles.container,
-          backgroundColor: colors.white,
           height,
           marginTop: top,
           marginBottom: bottom,
@@ -97,9 +96,35 @@ export default class Button extends Component<Props> {
     }
   }
 
+  renderLinearbackground = () => {
+    const { type } = this.props;
+    switch (type) {
+      case 'primary':
+        return (
+          <LinearGradient
+            colors={colors.gradient}
+            style={styles.gradient}
+            end={{ x: 0, y: 0 }}
+            start={{ x: 1, y: 0 }}
+          />
+        );
+      case 'secondary':
+        return (
+          <LinearGradient
+            colors={colors.secondaryLinearGradient}
+            style={styles.gradient}
+            end={{ x: 0, y: 0 }}
+            start={{ x: 1, y: 0 }}
+          />
+        );
+      default:
+        return null;
+    }
+  }
+
   render() {
     const {
-      style, title, titleStyle, onPress, iconName, type
+      style, title, titleStyle, onPress, iconName,
     } = this.props;
     return (
       <TouchableOpacity
@@ -107,16 +132,8 @@ export default class Button extends Component<Props> {
         onPress={onPress}
         style={[this.containerStyle(), style]}
       >
-        {
-          type === 'primary' ? (
-            <LinearGradient
-              colors={colors.gradient}
-              style={styles.gradient}
-              end={{ x: 0, y: 0 }}
-              start={{ x: 1, y: 0 }}
-            />
-          ) : null }
-        {iconName !== '' && <Icon name={iconName} style={{ position: 'absolute', left: measures.marginMedium, top: measures.defaultUnit }} color={colors.white} />}
+        {this.renderLinearbackground()}
+        {iconName !== '' && <Icon name={iconName} style={{ position: 'absolute', left: measures.marginMedium, top: measures.defaultUnit }} color={colors.black} />}
         <Text style={[this.titleStyle(), titleStyle]}>{title}</Text>
       </TouchableOpacity>
     );

@@ -22,6 +22,7 @@ const colors: { [key: string]: string | Array<string> } = {
   jaffa: '#f9690e',
   rose: '#d24d57',
   darkBlue: '#3A539B',
+  red: '#cf000f',
   transparent: 'transparent',
   spray: '#81cfe0',
   smoke: '#dadfe1',

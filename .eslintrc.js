@@ -18,5 +18,7 @@ module.exports = {
     "fetch": false,
     "require": false,
     "React$Node": false,
+    "isNaN": false,
+    "FormData": false
   }
 }

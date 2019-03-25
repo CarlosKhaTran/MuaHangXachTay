@@ -12,11 +12,13 @@ import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Content, Row, Button, Icon
 } from '../Widgets';
+import { Notify, Loading } from '../Global';
 import {
   EditLayout
 } from '../Layouts';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
+import { fireNoti } from '../../api';
 
 type Props = {
   navigation: NavigationScreenProp<{}>,
@@ -26,6 +28,7 @@ type State = {
   price: string,
   editEnabled: boolean,
   updateConfig: Object,
+  link: string,
   image: ?{
     uri: string,
   },
@@ -34,6 +37,11 @@ type State = {
 const editConfig: any = {
   itemName: {
     name: 'itemName',
+    typeName: 'input',
+    defaultValue: '',
+  },
+  link: {
+    name: 'link',
     typeName: 'input',
     defaultValue: '',
   },
@@ -49,6 +57,7 @@ export default class Admin extends Component<Props, State> {
   state = {
     itemName: '',
     price: '',
+    link: '',
     image: null,
     editEnabled: false,
     updateConfig: {},
@@ -66,7 +75,33 @@ export default class Admin extends Component<Props, State> {
     }));
   };
 
-  onProcess = () => { }
+  onProcess = async () => {
+    const {
+      itemName, price, image, link
+    } = this.state;
+    if (!itemName || !price) {
+      Notify.show('error', 'Gửi không thành công', 'Cần điền đủ thông tin tên sản phẩm và giá!');
+      return;
+    }
+    try {
+      Loading.show();
+      const rs = await fireNoti({
+        image,
+        product: itemName,
+        number: price,
+        link,
+      });
+      if (rs) {
+        Notify.show('success', 'Chúc mừng', 'Gửi thành công');
+      } else {
+        Notify.show('error', 'Gửi không thành công', 'Có lỗi hệ thống');
+      }
+      Loading.hide();
+    } catch (error) {
+      Loading.hide();
+      Notify.show('error', 'Gửi không thành công', 'Có lỗi hệ thống');
+    }
+  }
 
   onChangeValue = (infoName: string, value: string) => {
     this.setState(state => ({
@@ -84,13 +119,23 @@ export default class Admin extends Component<Props, State> {
   }
 
   onSelectImage = async () => {
-    const image: { path: string } = await ImagePicker.openPicker({
+    const image: { path: string, mime: string, filename: string } = await ImagePicker.openPicker({
       multiple: false
     });
     this.setState({
       image: {
         uri: image.path,
+        type: image.mime,
+        name: image.filename,
       }
+    });
+  }
+
+  onBack = () => {
+    const { navigation } = this.props;
+    navigation.navigate({
+      routeName: SCREENS.SHOPPING_CART,
+      key: SCREENS.SHOPPING_CART,
     });
   }
 
@@ -101,6 +146,7 @@ export default class Admin extends Component<Props, State> {
       updateConfig,
       editEnabled,
       image,
+      link,
     } = this.state;
     return (
       <Container>
@@ -108,6 +154,7 @@ export default class Admin extends Component<Props, State> {
           title="ĐƠN HÀNG"
           rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
           handleRightButton={this.onOpenNotification}
+          handleLeftButton={this.onBack}
         />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
@@ -118,7 +165,7 @@ export default class Admin extends Component<Props, State> {
                 <Row
                   onPress={() => this.onEnableEdit('itemName')}
                   first
-                  title="Hàng cần mua"
+                  title="Hàng cần bán"
                   placeHolder=""
                   value={itemName}
                   editEnabled
@@ -129,6 +176,14 @@ export default class Admin extends Component<Props, State> {
                   title="Giá"
                   placeHolder=""
                   value={price}
+                  editEnabled
+                />
+                <Row
+                  onPress={() => this.onEnableEdit('link')}
+                  first
+                  title="Link giới thiệu"
+                  placeHolder=""
+                  value={link}
                   editEnabled
                 />
               </Content>
@@ -146,8 +201,8 @@ export default class Admin extends Component<Props, State> {
                 </View>
               </Content>
             </Transition>
-            <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
           </ScrollView>
+          <Button block title="GỬI THÔNG TIN" type="primary" onPress={this.onProcess} />
         </View>
         {editEnabled
           && (

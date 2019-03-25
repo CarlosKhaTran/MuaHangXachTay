@@ -6,9 +6,10 @@ import {
   Image,
   TouchableHighlight,
   TouchableOpacity,
-  AsyncStorage,
   StyleSheet,
+  BackHandler,
 } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 import SCREENS from '../../routers/screens';
 import { measures, colors, defaultStyles } from '../../assets';
 import { Icon } from '../Widgets';
@@ -50,6 +51,16 @@ export default class Intro extends Component<Props, State> {
     isCompleted: false,
   };
 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+  }
+
+  handleBackPress = () => false
+
   onMove = (move: Function, position: number): void => {
     const { data } = this.props;
     if (position === data.length - 1) {
@@ -64,8 +75,13 @@ export default class Intro extends Component<Props, State> {
 
   onSkip = () => {
     const { navigation } = this.props;
-    AsyncStorage.setItem('isFirstTime', 'false');
-    navigation.navigate(SCREENS.SHOPPING_CART);
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({
+        routeName: SCREENS.SHOPPING_CART, key: SCREENS.SHOPPING_CART
+      })],
+    });
+    navigation.dispatch(resetAction);
   };
 
   render() {

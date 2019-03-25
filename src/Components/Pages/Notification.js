@@ -1,23 +1,21 @@
 // @flow
 import React, { Component } from 'react';
 import {
-  View, FlatList,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
+  View, FlatList, Text, StyleSheet, TouchableOpacity, AsyncStorage
 } from 'react-native';
-// import { Transition } from 'react-navigation-fluid-transitions';
+import Swipeout from 'react-native-swipeout';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Icon
 } from '../Widgets';
 import { defaultStyles, measures, colors } from '../../assets';
+import { SCREENS } from '../../routers';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>,
+  navigation: NavigationScreenProp<{}>
 };
 type State = {
-
+  notifications: Array<Noti>
 };
 
 type Noti = {
@@ -25,60 +23,26 @@ type Noti = {
   description: string,
   type: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE',
   seen: boolean,
-}
-
-const data: Array<Noti> = [{
-  title: 'Giày chạy bộ',
-  description: 'Giày Addidas ultra bosst 5.0 màu đen size 42',
-  type: 'NEW_PRODUCT',
-  seen: false
-}, {
-  title: 'Iphone Xs max',
-  description: 'Điện thoại iphone xs max 256 Gb, 2 sim vật lý quốc tế',
-  type: 'NEW_PRODUCT',
-  seen: true
-}, {
-  title: 'Iphone Ipad',
-  description: 'Ipad pro 9.7 inch like new (99%)',
-  type: 'NEW_PRODUCT',
-  seen: false
-}, {
-  title: 'Đặt hàng thành công',
-  description: 'Đặt hàng sản phẩm XXXXX thành công',
-  type: 'BOOKING_SUCESS',
-  seen: true
-}, {
-  title: 'Đặt hàng thất bại',
-  description: 'Đặt hàng sản phẩm yyyyy thất bại',
-  type: 'BOOKING_FALSE',
-  seen: true
-}, {
-  title: 'Iphone Ipad',
-  description: 'Ipad pro 9.7 inch like new (99%)',
-  type: 'NEW_PRODUCT',
-  seen: false
-}, {
-  title: 'Đặt hàng thành công',
-  description: 'Đặt hàng sản phẩm XXXXX thành công',
-  type: 'BOOKING_SUCESS',
-  seen: true
-}, {
-  title: 'Đặt hàng thất bại',
-  description: 'Đặt hàng sản phẩm yyyyy thất bại',
-  type: 'BOOKING_FALSE',
-  seen: true
-}];
+  url: ?string,
+  data: Object,
+};
 
 export default class Notification extends Component<Props, State> {
   state = {
-  }
+    notifications: []
+  };
 
-  length = data.length
+  async componentDidMount() {
+    const notifications = await AsyncStorage.getItem('notifications');
+    this.setState({
+      notifications: notifications ? JSON.parse(notifications) : []
+    });
+  }
 
   onBack = () => {
     const { navigation } = this.props;
     navigation.goBack();
-  }
+  };
 
   getColor = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {
     switch (color) {
@@ -89,6 +53,43 @@ export default class Notification extends Component<Props, State> {
       default:
         return colors.rose;
     }
+  };
+
+  onDelete = (index: number) => {
+    const { notifications } = this.state;
+    const newNotifications = notifications.filter((item: Noti, id: number) => id !== index);
+    this.setState({
+      notifications: newNotifications
+    });
+    AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
+  };
+
+  onOpen = (item: Noti, index: number) => {
+    const { notifications } = this.state;
+    const { navigation } = this.props;
+    const {
+      product, number, url, link
+    } = item.data;
+    if (!item.seen) {
+      const newNotifications = notifications.map((el: Noti, id: number) => (id !== index ? el : {
+        ...el,
+        seen: true,
+      }));
+      this.setState({
+        notifications: newNotifications
+      });
+      AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
+    }
+    navigation.navigate({
+      routeName: SCREENS.PRODUCT,
+      key: SCREENS.PRODUCT,
+      params: {
+        product,
+        number,
+        url,
+        link
+      }
+    });
   }
 
   getIcon = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {
@@ -100,44 +101,58 @@ export default class Notification extends Component<Props, State> {
       default:
         return <Icon size="small" name="warning" color={colors.white} type="fa" />;
     }
-  }
+  };
 
   renderItem = ({ item, index }: { item: Noti, index: number }) => (
-    <View style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}>
-      <View style={styles.left}>
-        <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
-          {this.getIcon(item.type)}
+    <Swipeout
+      backgroundColor={colors.transparent}
+      autoClose
+      right={[
+        {
+          text: 'Delete',
+          backgroundColor: colors.transparent,
+          color: colors.red,
+          onPress: () => this.onDelete(index)
+        }
+      ]}
+    >
+      <TouchableOpacity
+        style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}
+        onPress={() => this.onOpen(item, index)}
+      >
+        <View style={styles.left}>
+          <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
+            {this.getIcon(item.type)}
+          </View>
         </View>
-      </View>
-      <View style={styles.middle}>
-        <Text style={styles.notiTitle}>
-          {item.title}
-          {!item.seen && <Text style={styles.new}> (New)</Text>}
-        </Text>
-        <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
-          {item.description}
-        </Text>
-      </View>
-      <TouchableOpacity style={styles.right}>
-        <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
+        <View style={styles.middle}>
+          <Text style={styles.notiTitle}>
+            {item.title}
+            {!item.seen && <Text style={styles.new}> (New)</Text>}
+          </Text>
+          <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
+            {item.description}
+          </Text>
+        </View>
+        <View style={styles.right}>
+          <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
+        </View>
       </TouchableOpacity>
-    </View>
-  )
-
+    </Swipeout>
+  );
 
   render() {
+    const { notifications } = this.state;
     return (
       <Container>
-        <Header
-          title="THÔNG BÁO"
-          handleLeftButton={this.onBack}
-        />
+        <Header title="THÔNG BÁO" handleLeftButton={this.onBack} />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
           <FlatList
             contentContainerStyle={styles.content}
-            data={data}
+            data={notifications}
             renderItem={this.renderItem}
+            extraData={this.state}
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
@@ -148,18 +163,17 @@ export default class Notification extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   content: {
-    paddingBottom: measures.paddingMedium,
     marginHorizontal: measures.marginMedium,
     marginBottom: measures.marginMedium,
     backgroundColor: colors.white,
-    ...defaultStyles.shadow,
+    ...defaultStyles.shadow
   },
   rowContainer: {
     height: measures.defaultUnit * 8,
     flexDirection: 'row',
     borderColor: colors.seperator,
     borderTopWidth: 0.5,
-    paddingLeft: measures.paddingSmall,
+    paddingLeft: measures.paddingSmall
   },
   left: {
     width: measures.defaultUnit * 6,
@@ -169,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    backgroundColor: colors.white,
+    backgroundColor: colors.white
   },
   middleLeft: {
     width: measures.defaultUnit * 5,
@@ -177,35 +191,34 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green,
     borderRadius: measures.defaultUnit * 2.5,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   middle: {
     flex: 1,
     marginLeft: measures.marginSmall,
-    paddingVertical: measures.paddingSmall,
+    paddingVertical: measures.paddingSmall
   },
   right: {
     width: measures.defaultUnit * 4,
     height: measures.defaultUnit * 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   notiTitle: {
     ...defaultStyles.text,
     fontSize: measures.fontSizeMedium,
     color: colors.black,
     fontWeight: '500',
-    marginBottom: measures.marginSmall,
+    marginBottom: measures.marginSmall
   },
   new: {
     color: colors.softRed,
-    fontSize: measures.fontSizeMedium - 2,
+    fontSize: measures.fontSizeMedium - 2
   },
   description: {
     ...defaultStyles.text,
     fontSize: measures.fontSizeSmall,
     color: colors.black,
-    fontWeight: '400',
-
-  },
+    fontWeight: '400'
+  }
 });

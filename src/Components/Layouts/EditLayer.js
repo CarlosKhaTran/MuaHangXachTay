@@ -1,7 +1,8 @@
 // @flow
 import React, { Component } from 'react';
+import _ from 'lodash';
 import {
-  View, TouchableOpacity, StyleSheet, TextInput, Text
+  View, TouchableOpacity, StyleSheet, TextInput, Text, Platform,
 } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -18,6 +19,7 @@ type Props = {
     defaultValue: string,
     keyboardType?: string,
     options?: Array<{ key: string, value: string }>,
+    adjustNumber?: boolean,
   },
 };
 type State = {
@@ -51,6 +53,28 @@ export default class EditLayout extends Component<Props, State> {
     onHide();
   }
 
+  onAdjust = (isAscend: boolean) => {
+    const { updateValue } = this.state;
+    if (_.isNaN(updateValue)) {
+      return;
+    }
+    const newValue = isAscend ? _.parseInt(updateValue) + 1 : _.parseInt(updateValue) - 1;
+    this.setState({
+      updateValue: newValue < 0 ? '0' : newValue.toString(),
+    });
+  }
+
+  renderAdjustButton = () => (
+    <View style={styles.adjustButtonContainer}>
+      <TouchableOpacity style={defaultStyles.fill} onPress={() => this.onAdjust(true)}>
+        <Icon type="ant" name="caretup" size={15} color={colors.gray} />
+      </TouchableOpacity>
+      <TouchableOpacity style={defaultStyles.fill}>
+        <Icon type="ant" name="caretdown" size={15} color={colors.gray} onPress={() => this.onAdjust(false)} />
+      </TouchableOpacity>
+    </View>
+  )
+
   renderContent = (): React$Node => {
     const { updateValue } = this.state;
     const { config, onHide } = this.props;
@@ -68,7 +92,7 @@ export default class EditLayout extends Component<Props, State> {
                 onChangeText={this.onChangeValue}
                 keyboardType={config.keyboardType}
               />
-              <Icon name="cancel" type="md" size={15} onPress={() => this.onChangeValue('')} />
+              {config.adjustNumber ? this.renderAdjustButton() : <Icon name="cancel" type="md" size={15} onPress={() => this.onChangeValue('')} />}
             </View>
             <View style={styles.footer}>
               <View style={defaultStyles.fill}>
@@ -77,12 +101,12 @@ export default class EditLayout extends Component<Props, State> {
                   top={measures.defaultUnit}
                   block
                   onPress={onHide}
-                  title="Cancel"
+                  title="HUỶ"
                   height={36}
                 />
               </View>
               <View style={defaultStyles.fill}>
-                <Button onPress={this.onConfirm} type="primary" top={measures.defaultUnit} block title="Done" height={36} />
+                <Button onPress={this.onConfirm} type="primary" top={measures.defaultUnit} block title="NHẬP" height={36} />
               </View>
             </View>
           </View>
@@ -171,7 +195,7 @@ export default class EditLayout extends Component<Props, State> {
       <View style={[styles.container]}>
         <TouchableOpacity onPress={onHide} style={defaultStyles.fill} />
         {this.renderContent()}
-        <KeyboardSpacer />
+        {Platform.OS === 'ios' && <KeyboardSpacer />}
       </View>
     );
   }
@@ -238,5 +262,9 @@ const styles = StyleSheet.create({
     fontSize: measures.fontSizelarge,
     color: colors.black,
     fontWeight: '300',
+  },
+  adjustButtonContainer: {
+    height: '100%',
+    width: 30,
   },
 });

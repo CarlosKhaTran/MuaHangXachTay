@@ -3,6 +3,10 @@ package com.muahangxachtay;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this line
+
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -28,11 +32,14 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebasePackage(),
             new PickerPackage(),
             new LinearGradientPackage(),
             new VectorIconsPackage(),
             new LottiePackage(),
-            new RNDeviceInfo()
+            new RNDeviceInfo(),
+            new RNFirebaseNotificationsPackage(), // <-- Add this line
+            new RNFirebaseMessagingPackage() // <-- Add this line
       );
     }
 

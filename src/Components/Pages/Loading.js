@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { StyleSheet, View, AsyncStorage } from 'react-native';
+import { NavigationScreenProp, StackActions, NavigationActions } from 'react-navigation';
 import LottieView from 'lottie-react-native';
 import { Container } from '../Widgets';
 import { measures, colors } from '../../assets';
@@ -18,14 +18,26 @@ export default class LoadingPage extends Component<Props, State> {
   state = {
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { navigation } = this.props;
+    const notFirstTime = await AsyncStorage.getItem('notFirstTime');
     setTimeout(() => {
-      navigation.navigate({
-        routeName: SCREENS.INTRO,
-        key: SCREENS.INTRO,
-      });
-    }, 3000);
+      if (notFirstTime) {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({
+            routeName: SCREENS.SHOPPING_CART, key: SCREENS.SHOPPING_CART
+          })],
+        });
+        navigation.dispatch(resetAction);
+      } else {
+        navigation.navigate({
+          routeName: SCREENS.INTRO,
+          key: SCREENS.INTRO,
+        });
+      }
+    }, 2000);
+    AsyncStorage.setItem('notFirstTime', 'true');
   }
 
   componentWillUnmount() {

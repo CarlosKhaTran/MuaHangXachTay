@@ -7,18 +7,21 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "lodash": "^4.17.11",
-    "lottie-react-native": "2.5.9",
+    "lottie-react-native": "2.5.11",
     "react": "16.6.3",
     "react-native": "0.58.6",
     "react-native-device-info": "^0.26.4",
     "react-native-dropdownalert": "^3.9.2",
+    "react-native-firebase": "^5.2.3",
     "react-native-image-crop-picker": "^0.23.0",
     "react-native-image-slider": "^2.0.3",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-linear-gradient": "^2.5.3",
     "react-native-modal-datetime-picker": "^6.0.0",
+    "react-native-swipeout": "^2.3.6",
     "react-native-vector-icons": "^6.3.0",
     "react-navigation": "^3.3.2",
     "react-navigation-fluid-transitions": "^0.3.1"

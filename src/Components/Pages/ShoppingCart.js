@@ -1,10 +1,15 @@
 // @flow
 import React, { Component } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
   InteractionManager,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler,
+  AsyncStorage,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -12,98 +17,146 @@ import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Content, Row, Button, Icon
 } from '../Widgets';
-import {
-  EditLayout
-} from '../Layouts';
+import { EditLayout } from '../Layouts';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
+import { sendEmail } from '../../api';
+import { Notify, Loading } from '../Global';
+// import console = require('console');
 
 type Props = {
-  navigation: NavigationScreenProp<{}>,
+  navigation: NavigationScreenProp<{}>
 };
 type State = {
-  fullName: string,
-  phoneNumber: string,
+  name: string,
+  phone: string,
   address: string,
-  itemName: string,
-  quantity: string,
+  product: string,
+  number: string,
   date: string,
-  expectedPrice: string,
+  cost: string,
   editEnabled: boolean,
   updateConfig: Object,
+  note: string,
   image: ?{
     uri: string,
+    type: string,
+    fileName: string
   },
-  loginAttempt: number,
+  loginAttempt: number
 };
 
 const editConfig: any = {
-  fullName: {
-    name: 'fullName',
+  name: {
+    name: 'name',
     typeName: 'input',
-    defaultValue: '',
+    defaultValue: ''
+  },
+  note: {
+    name: 'note',
+    typeName: 'input',
+    defaultValue: ''
   },
   address: {
     name: 'address',
     typeName: 'input',
-    defaultValue: '',
+    defaultValue: ''
   },
-  phoneNumber: {
-    name: 'phoneNumber',
+  phone: {
+    name: 'phone',
+    typeName: 'input',
+    defaultValue: '',
+    keyboardType: 'numeric'
+  },
+  product: {
+    name: 'product',
+    typeName: 'input',
+    defaultValue: ''
+  },
+  number: {
+    name: 'number',
     typeName: 'input',
     defaultValue: '',
     keyboardType: 'numeric',
-  },
-  itemName: {
-    name: 'itemName',
-    typeName: 'input',
-    defaultValue: '',
-  },
-  quantity: {
-    name: 'quantity',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric',
+    adjustNumber: true
   },
   date: {
     name: 'date',
     typeName: 'select',
-    options: [{
-      key: '1 tuần',
-      value: '1 tuần',
-    }, {
-      key: '2 tuần',
-      value: '2 tuần',
-    }, {
-      key: '3 tuần',
-      value: '3 tuần',
-    }, {
-      key: '1 tháng',
-      value: '1 tháng',
-    }]
+    options: [
+      {
+        key: '1 tuần',
+        value: '1 tuần'
+      },
+      {
+        key: '2 tuần',
+        value: '2 tuần'
+      },
+      {
+        key: '3 tuần',
+        value: '3 tuần'
+      },
+      {
+        key: '1 tháng',
+        value: '1 tháng'
+      }
+    ]
   },
-  expectedPrice: {
-    name: 'expectedPrice',
+  cost: {
+    name: 'cost',
     typeName: 'input',
     defaultValue: '',
-    keyboardType: 'numeric',
-  },
+    keyboardType: 'numeric'
+  }
 };
 
 export default class ShoppingCart extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.didFocusSubscription = props.navigation.addListener('didFocus', () => BackHandler.addEventListener('hardwareBackPress', this.handleBackPress));
+  }
+
   state = {
-    fullName: '',
-    phoneNumber: '',
-    itemName: '',
-    quantity: '',
+    name: '',
+    phone: '',
+    product: '',
+    number: '',
     date: '',
-    expectedPrice: '',
+    cost: '',
     address: '',
+    note: '',
     editEnabled: false,
     updateConfig: {},
     image: null,
-    loginAttempt: 0,
+    loginAttempt: 0
+  };
+
+  async componentDidMount() {
+    this.didFocusSubscription = this.props.navigation.addListener('didFocus', () => {
+      const product = this.props.navigation.getParam('product');
+      const price = this.props.navigation.getParam('price');
+      this.setState({
+        product: product || '',
+        cost: price || '',
+      });
+    });
+    this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress));
+    const name = await AsyncStorage.getItem('name');
+    const phone = await AsyncStorage.getItem('phone');
+    const address = await AsyncStorage.getItem('address');
+    this.setState({
+      name: name || '',
+      phone: phone || '',
+      address: address || '',
+    });
   }
+
+  componentWillUnmount() {
+    if (this.didFocusSubscription) this.didFocusSubscription.remove();
+    if (this.willBlurSubscription) this.willBlurSubscription.remove();
+  }
+
+  handleBackPress = () => false
 
   onEnableEdit = (infoName: string) => {
     const { editEnabled } = this.state;
@@ -112,17 +165,51 @@ export default class ShoppingCart extends Component<Props, State> {
       editEnabled: !editEnabled,
       updateConfig: {
         ...editConfig[infoName],
-        defaultValue,
-      },
+        defaultValue
+      }
     }));
   };
 
-  onProcess = () => { }
+  onProcess = async () => {
+    const {
+      image, name, address, product, number, date, cost, note, phone
+    } = this.state;
+    if (!name || !product || !number || !phone) {
+      Notify.show('error', 'Gửi không thành công', 'Cần điền đủ thông tin!');
+      return;
+    }
+    try {
+      Loading.show();
+      const rs = await sendEmail({
+        image,
+        name,
+        address,
+        product,
+        number,
+        date,
+        cost,
+        note,
+        phone
+      });
+      if (rs) {
+        Notify.show('success', 'Chúc mừng', 'Gửi thành công');
+        AsyncStorage.setItem('phone', phone);
+        AsyncStorage.setItem('name', name);
+        AsyncStorage.setItem('address', address);
+      } else {
+        Notify.show('error', 'Gửi không thành công', 'Có lỗi hệ thống');
+      }
+      Loading.hide();
+    } catch (error) {
+      Loading.hide();
+      Notify.show('error', 'Gửi không thành công', 'Có lỗi hệ thống');
+    }
+  };
 
   onChangeValue = (infoName: string, value: string) => {
     this.setState(state => ({
       ...state,
-      [infoName]: value,
+      [infoName]: value
     }));
   };
 
@@ -130,51 +217,59 @@ export default class ShoppingCart extends Component<Props, State> {
     const { navigation } = this.props;
     navigation.navigate({
       routeName: SCREENS.NOTIFICATION,
-      key: SCREENS.NOTIFICATION,
+      key: SCREENS.NOTIFICATION
     });
-  }
+  };
 
   onSelectImage = async () => {
-    const image: { path: string } = await ImagePicker.openPicker({
+    const image: { path: string, mime: string, filename: string } = await ImagePicker.openPicker({
       multiple: false
     });
+    console.log('xxx', image);
     this.setState({
       image: {
         uri: image.path,
+        type: image.mime,
+        fileName: image.filename,
       }
     });
-  }
+  };
 
   handleSecretAction = () => {
     const { loginAttempt } = this.state;
     const { navigation } = this.props;
     if (loginAttempt === 10) {
       this.setState({
-        loginAttempt: 0,
+        loginAttempt: 0
       });
       navigation.navigate({
         routeName: SCREENS.ADMIN_LOGIN,
-        key: SCREENS.ADMIN_LOGIN,
+        key: SCREENS.ADMIN_LOGIN
       });
     } else {
       this.setState({
-        loginAttempt: loginAttempt + 1,
+        loginAttempt: loginAttempt + 1
       });
     }
-  }
+  };
+
+  didFocusSubscription: any
+
+  willBlurSubscription: any
 
   render() {
     const {
-      fullName,
-      phoneNumber,
-      itemName,
-      quantity,
-      expectedPrice,
+      name,
+      phone,
+      product,
+      number,
+      cost,
       date,
       updateConfig,
       editEnabled,
       address,
       image,
+      note
     } = this.state;
     return (
       <Container>
@@ -191,19 +286,19 @@ export default class ShoppingCart extends Component<Props, State> {
               <Content>
                 <Text style={styles.title}>THÔNG TIN CÁ NHÂN</Text>
                 <Row
-                  onPress={() => this.onEnableEdit('fullName')}
+                  onPress={() => this.onEnableEdit('name')}
                   first
-                  title="Họ tên"
+                  title="Họ tên (*)"
                   placeHolder="Nguyen Van A"
-                  value={fullName}
+                  value={name}
                   editEnabled
                 />
                 <Row
-                  onPress={() => this.onEnableEdit('fullName')}
+                  onPress={() => this.onEnableEdit('phone')}
                   first
-                  title="Số Điện Thoại"
+                  title="Số Điện Thoại (*)"
                   placeHolder="0901000000"
-                  value={phoneNumber}
+                  value={phone}
                   editEnabled
                 />
                 <Row
@@ -220,19 +315,19 @@ export default class ShoppingCart extends Component<Props, State> {
               <Content>
                 <Text style={[styles.title, { marginTop: measures.marginMedium }]}>ĐƠN HÀNG</Text>
                 <Row
-                  onPress={() => this.onEnableEdit('itemName')}
+                  onPress={() => this.onEnableEdit('product')}
                   first
-                  title="Hàng cần mua"
+                  title="Hàng cần mua (*)"
                   placeHolder=""
-                  value={itemName}
+                  value={product}
                   editEnabled
                 />
                 <Row
-                  onPress={() => this.onEnableEdit('quantity')}
+                  onPress={() => this.onEnableEdit('number')}
                   first
-                  title="Số lượng"
+                  title="Số lượng (*)"
                   placeHolder=""
-                  value={quantity}
+                  value={number}
                   editEnabled
                 />
               </Content>
@@ -243,11 +338,11 @@ export default class ShoppingCart extends Component<Props, State> {
                   THÔNG TIN BỔ SUNG (Không bắt buộc)
                 </Text>
                 <Row
-                  onPress={() => this.onEnableEdit('expectedPrice')}
+                  onPress={() => this.onEnableEdit('cost')}
                   first
                   title="Giá mong muốn"
                   placeHolder=""
-                  value={expectedPrice}
+                  value={cost}
                   editEnabled
                 />
                 <Row
@@ -256,6 +351,14 @@ export default class ShoppingCart extends Component<Props, State> {
                   title="Thời gian giao hàng"
                   placeHolder=""
                   value={date}
+                  editEnabled
+                />
+                <Row
+                  onPress={() => this.onEnableEdit('note')}
+                  first
+                  title="Ghi chú"
+                  placeHolder=""
+                  value={note}
                   editEnabled
                 />
               </Content>
@@ -269,21 +372,23 @@ export default class ShoppingCart extends Component<Props, State> {
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                  <Image source={image || require('../../assets/images/default_image.jpg')} style={styles.image} />
+                  <Image
+                    source={image || require('../../assets/images/default_image.jpg')}
+                    style={styles.image}
+                  />
                 </View>
               </Content>
             </Transition>
             <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
           </ScrollView>
         </View>
-        {editEnabled
-          && (
-            <EditLayout
-              config={updateConfig}
-              onChangeValue={this.onChangeValue}
-              onHide={this.onEnableEdit}
-            />
-          )}
+        {editEnabled && (
+          <EditLayout
+            config={updateConfig}
+            onChangeValue={this.onChangeValue}
+            onHide={this.onEnableEdit}
+          />
+        )}
       </Container>
     );
   }
@@ -295,19 +400,19 @@ const styles = StyleSheet.create({
     fontSize: measures.fontSizeMedium,
     color: colors.black,
     fontWeight: '500',
-    marginLeft: measures.marginSmall,
+    marginLeft: measures.marginSmall
   },
   image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    borderRadius: measures.borderRadius,
+    borderRadius: measures.borderRadius
   },
   imageContainer: {
     marginVertical: measures.marginSmall,
     width: measures.width - 4 * measures.marginMedium,
-    height: (measures.width - 4 * measures.marginMedium) * 2 / 3,
+    height: ((measures.width - 4 * measures.marginMedium) * 2) / 3,
     ...defaultStyles.shadow,
-    alignSelf: 'center',
+    alignSelf: 'center'
   }
 });

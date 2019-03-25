@@ -26,6 +26,9 @@ export default createAppContainer(createFluidNavigator(
     [SCREENS.ADMIN]: {
       screen: pages.Admin,
     },
+    [SCREENS.PRODUCT]: {
+      screen: pages.Product,
+    }
   },
   {
     headerMode: 'none',

@@ -15,10 +15,11 @@ type Props = {
   onPress: Function,
   placeHolder: string,
   multiline: boolean,
+  iconName: ?string,
 };
 
 export default ({
-  title, value, editEnabled, first, onPress, placeHolder, multiline
+  title, value, editEnabled, first, onPress, placeHolder, multiline, iconName
 }: Props) => (
   <TouchableOpacity
     disabled={!editEnabled}
@@ -33,7 +34,7 @@ export default ({
         <Text ellipsizeMode="tail" style={styles.rowDetail}>{value}</Text>
       )}
     </View>
-    {editEnabled && <Icon name="fountain-pen-tip" type="mdc" color={colors.softRed} style={styles.icon} />}
+    {editEnabled && <Icon name={iconName || 'fountain-pen-tip'} type="mdc" color={colors.softRed} style={styles.icon} />}
   </TouchableOpacity>
 );
 

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "784910150373",
+    "firebase_url": "https://muahangxachtay-b5c86.firebaseio.com",
+    "project_id": "muahangxachtay-b5c86",
+    "storage_bucket": "muahangxachtay-b5c86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784910150373:android:d850e72d924f0661",
+        "android_client_info": {
+          "package_name": "com.muahangxachtay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784910150373-8bvsr4b26igej99ptuchj6mrtch1ssug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNW5phODZPIXWYr4Ec5qRnUefUlIIAOU0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

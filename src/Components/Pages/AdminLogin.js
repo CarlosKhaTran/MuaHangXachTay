@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import {
+  View, StyleSheet, Text, Platform
+} from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -108,7 +110,10 @@ const styles = StyleSheet.create({
     marginBottom: measures.marginLong
   },
   text: {
-    ...defaultStyles.text,
+    fontFamily: Platform.select({
+      ios: 'Montserrat',
+      android: 'Montserrat-Bold'
+    }),
     fontSize: measures.fontSizeLarge,
     fontWeight: 'bold',
     color: colors.lemon,

@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet, Text } from 'react-native';
+import {
+  TouchableOpacity, StyleSheet, Text, Platform
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import type { Style } from '../../utils/typeDefinition';
 import Icon from './Icon';
@@ -155,8 +157,11 @@ const styles = StyleSheet.create({
     borderRadius: measures.borderRadius,
   },
   title: {
-    ...defaultStyles.text,
     fontWeight: 'bold',
+    fontFamily: Platform.select({
+      ios: 'Montserrat',
+      android: 'Montserrat-Bold'
+    }),
     fontSize: measures.fontSizeMedium,
   },
 });

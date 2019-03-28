@@ -1,18 +1,20 @@
 // @flow
 import React, { Component } from 'react';
+import _ from 'lodash';
 import {
   View,
+  Alert,
   Text,
   StyleSheet,
-  ScrollView,
-  InteractionManager,
   Image,
   TouchableOpacity,
   BackHandler,
+  Platform,
+  InteractionManager,
   AsyncStorage,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Content, Row, Button, Icon
@@ -24,6 +26,8 @@ import { sendEmail } from '../../api';
 import { Notify, Loading } from '../Global';
 // import console = require('console');
 
+
+const requireCheck = ['name', 'number', 'phone', 'product'];
 type Props = {
   navigation: NavigationScreenProp<{}>
 };
@@ -38,6 +42,10 @@ type State = {
   editEnabled: boolean,
   updateConfig: Object,
   note: string,
+  nameError: boolean,
+  phoneError: boolean,
+  productError: boolean,
+  numberError: boolean,
   image: ?{
     uri: string,
     type: string,
@@ -45,41 +53,7 @@ type State = {
   },
   loginAttempt: number
 };
-
 const editConfig: any = {
-  name: {
-    name: 'name',
-    typeName: 'input',
-    defaultValue: ''
-  },
-  note: {
-    name: 'note',
-    typeName: 'input',
-    defaultValue: ''
-  },
-  address: {
-    name: 'address',
-    typeName: 'input',
-    defaultValue: ''
-  },
-  phone: {
-    name: 'phone',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric'
-  },
-  product: {
-    name: 'product',
-    typeName: 'input',
-    defaultValue: ''
-  },
-  number: {
-    name: 'number',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric',
-    adjustNumber: true
-  },
   date: {
     name: 'date',
     typeName: 'select',
@@ -102,12 +76,6 @@ const editConfig: any = {
       }
     ]
   },
-  cost: {
-    name: 'cost',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric'
-  }
 };
 
 export default class ShoppingCart extends Component<Props, State> {
@@ -116,7 +84,7 @@ export default class ShoppingCart extends Component<Props, State> {
     this.didFocusSubscription = props.navigation.addListener('didFocus', () => BackHandler.addEventListener('hardwareBackPress', this.handleBackPress));
   }
 
-  state = {
+  state: State = {
     name: '',
     phone: '',
     product: '',
@@ -125,6 +93,10 @@ export default class ShoppingCart extends Component<Props, State> {
     cost: '',
     address: '',
     note: '',
+    nameError: false,
+    phoneError: false,
+    productError: false,
+    numberError: false,
     editEnabled: false,
     updateConfig: {},
     image: null,
@@ -132,22 +104,26 @@ export default class ShoppingCart extends Component<Props, State> {
   };
 
   async componentDidMount() {
+
     this.didFocusSubscription = this.props.navigation.addListener('didFocus', () => {
-      const product = this.props.navigation.getParam('product');
-      const price = this.props.navigation.getParam('price');
+      const {
+        product, cost,
+      } = this.state;
+      const productReceived = this.props.navigation.getParam('product');
+      const priceReceived = this.props.navigation.getParam('price');
       this.setState({
-        product: product || '',
-        cost: price || '',
+        product: productReceived || product,
+        cost: priceReceived || cost,
       });
     });
     this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress));
-    const name = await AsyncStorage.getItem('name');
-    const phone = await AsyncStorage.getItem('phone');
-    const address = await AsyncStorage.getItem('address');
+    const nameReceived = await AsyncStorage.getItem('name');
+    const phoneReceived = await AsyncStorage.getItem('phone');
+    const addressReceived = await AsyncStorage.getItem('address');
     this.setState({
-      name: name || '',
-      phone: phone || '',
-      address: address || '',
+      name: nameReceived || '',
+      phone: phoneReceived || '',
+      address: addressReceived || '',
     });
   }
 
@@ -170,10 +146,30 @@ export default class ShoppingCart extends Component<Props, State> {
     }));
   };
 
+  onAdjust = (name: string, isAscend: boolean) => {
+    const value = this.state[name];
+    if (_.isNaN(value) || _.isEmpty(value)) {
+      return;
+    }
+    const newValue = isAscend ? _.parseInt(value) + 1 : _.parseInt(value) - 1;
+    this.setState({
+      [name]: newValue < 0 ? '0' : newValue.toString(),
+    });
+  }
+
   onProcess = async () => {
     const {
       image, name, address, product, number, date, cost, note, phone
     } = this.state;
+    const newState = {};
+    requireCheck.forEach((item: string) => {
+      if (this.state[item] === '') {
+        newState[`${item}Error`] = true;
+      }
+    });
+    if (!_.isEmpty(newState)) {
+      this.setState(newState);
+    }
     if (!name || !product || !number || !phone) {
       Notify.show('error', 'Gửi không thành công', 'Cần điền đủ thông tin!');
       return;
@@ -209,7 +205,8 @@ export default class ShoppingCart extends Component<Props, State> {
   onChangeValue = (infoName: string, value: string) => {
     this.setState(state => ({
       ...state,
-      [infoName]: value
+      [infoName]: value,
+      [`${infoName}Error`]: false,
     }));
   };
 
@@ -221,11 +218,13 @@ export default class ShoppingCart extends Component<Props, State> {
     });
   };
 
-  onSelectImage = async () => {
-    const image: { path: string, mime: string, filename: string } = await ImagePicker.openPicker({
-      multiple: false
-    });
-    console.log('xxx', image);
+  onSelectImage = async (camera: boolean) => {
+    const image: { path: string, mime: string, filename: string } = camera
+      ? await ImagePicker.openCamera({
+        multiple: false,
+      }) : await ImagePicker.openPicker({
+        multiple: false,
+      });
     this.setState({
       image: {
         uri: image.path,
@@ -253,6 +252,18 @@ export default class ShoppingCart extends Component<Props, State> {
     }
   };
 
+  openAlert = () => {
+    Alert.alert(
+      'Chọn ảnh',
+      '',
+      [
+        { text: 'Thư viện', onPress: () => this.onSelectImage(false) },
+        { text: 'Máy ảnh', onPress: () => this.onSelectImage(true) },
+      ],
+      { cancelable: true },
+    );
+  }
+
   didFocusSubscription: any
 
   willBlurSubscription: any
@@ -265,6 +276,10 @@ export default class ShoppingCart extends Component<Props, State> {
       number,
       cost,
       date,
+      nameError,
+      phoneError,
+      numberError,
+      productError,
       updateConfig,
       editEnabled,
       address,
@@ -281,106 +296,116 @@ export default class ShoppingCart extends Component<Props, State> {
         />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
-          <ScrollView>
-            <Transition appear="left">
-              <Content>
-                <Text style={styles.title}>THÔNG TIN CÁ NHÂN</Text>
-                <Row
-                  onPress={() => this.onEnableEdit('name')}
-                  first
-                  title="Họ tên (*)"
-                  placeHolder="Nguyen Van A"
-                  value={name}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('phone')}
-                  first
-                  title="Số Điện Thoại (*)"
-                  placeHolder="0901000000"
-                  value={phone}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('address')}
-                  first
-                  title="Địa Chỉ (Không bắt buộc)"
-                  placeHolder="Số nhà/ Đường/ Huyện (Quận), ..."
-                  value={address}
-                  editEnabled
-                />
-              </Content>
-            </Transition>
-            <Transition appear="right">
-              <Content>
-                <Text style={[styles.title, { marginTop: measures.marginMedium }]}>ĐƠN HÀNG</Text>
-                <Row
-                  onPress={() => this.onEnableEdit('product')}
-                  first
-                  title="Hàng cần mua (*)"
-                  placeHolder=""
-                  value={product}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('number')}
-                  first
-                  title="Số lượng (*)"
-                  placeHolder=""
-                  value={number}
-                  editEnabled
-                />
-              </Content>
-            </Transition>
-            <Transition appear="left">
-              <Content>
-                <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
-                  THÔNG TIN BỔ SUNG (Không bắt buộc)
+          <KeyboardAwareScrollView>
+            <Content>
+              <Text style={styles.title}>THÔNG TIN CÁ NHÂN</Text>
+              <Row
+                first
+                title="Họ tên (*)"
+                name="name"
+                error={nameError}
+                onChangeValue={this.onChangeValue}
+                placeHolder="Nguyen Van A"
+                value={name}
+                editEnabled
+              />
+              <Row
+                first
+                name="phone"
+                error={phoneError}
+                onChangeValue={this.onChangeValue}
+                title="Số Điện Thoại (*)"
+                placeHolder="0901000000"
+                keyboardType="numeric"
+                value={phone}
+                editEnabled
+              />
+              <Row
+                first
+                title="Địa Chỉ (Không bắt buộc)"
+                name="address"
+                onChangeValue={this.onChangeValue}
+                placeHolder="Số nhà/ Đường/ Huyện (Quận), ..."
+                value={address}
+                editEnabled
+              />
+            </Content>
+            <Content>
+              <Text style={[styles.title, { marginTop: measures.marginMedium }]}>ĐƠN HÀNG</Text>
+              <Row
+                first
+                title="Hàng cần mua (*)"
+                placeHolder=""
+                error={productError}
+                name="product"
+                onChangeValue={this.onChangeValue}
+                value={product}
+                editEnabled
+              />
+              <Row
+                first
+                title="Số lượng (*)"
+                placeHolder=""
+                keyboardType="numeric"
+                error={numberError}
+                onAdjust={this.onAdjust}
+                adjustable
+                name="number"
+                onChangeValue={this.onChangeValue}
+                value={number}
+                editEnabled
+              />
+            </Content>
+            <Content>
+              <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
+                THÔNG TIN BỔ SUNG (Không bắt buộc)
                 </Text>
-                <Row
-                  onPress={() => this.onEnableEdit('cost')}
-                  first
-                  title="Giá mong muốn"
-                  placeHolder=""
-                  value={cost}
-                  editEnabled
+              <Row
+                first
+                title="Giá mong muốn"
+                placeHolder=""
+                number
+                value={cost}
+                keyboardType="numeric"
+                name="cost"
+                onChangeValue={this.onChangeValue}
+                editEnabled
+              />
+              <Row
+                onPress={() => this.onEnableEdit('date')}
+                first
+                title="Thời gian giao hàng"
+                placeHolder=""
+                value={date}
+                editEnabled
+                type="select"
+              />
+              <Row
+                first
+                title="Ghi chú"
+                placeHolder=""
+                value={note}
+                name="note"
+                onChangeValue={this.onChangeValue}
+                editEnabled
+              />
+            </Content>
+            <Content>
+              <TouchableOpacity onPress={this.openAlert}>
+                <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
+                  {'HÌNH ẢNH '}
+                  <Icon name="ios-camera" color={colors.blue} />
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={image || require('../../assets/images/default_image.jpg')}
+                  style={styles.image}
                 />
-                <Row
-                  onPress={() => this.onEnableEdit('date')}
-                  first
-                  title="Thời gian giao hàng"
-                  placeHolder=""
-                  value={date}
-                  editEnabled
-                />
-                <Row
-                  onPress={() => this.onEnableEdit('note')}
-                  first
-                  title="Ghi chú"
-                  placeHolder=""
-                  value={note}
-                  editEnabled
-                />
-              </Content>
-            </Transition>
-            <Transition appear="right">
-              <Content>
-                <TouchableOpacity onPress={this.onSelectImage}>
-                  <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
-                    {'HÌNH ẢNH '}
-                    <Icon name="ios-camera" color={colors.blue} />
-                  </Text>
-                </TouchableOpacity>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={image || require('../../assets/images/default_image.jpg')}
-                    style={styles.image}
-                  />
-                </View>
-              </Content>
-            </Transition>
+              </View>
+            </Content>
             <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
         {editEnabled && (
           <EditLayout
@@ -399,7 +424,10 @@ const styles = StyleSheet.create({
     ...defaultStyles.text,
     fontSize: measures.fontSizeMedium,
     color: colors.black,
-    fontWeight: '500',
+    fontFamily: Platform.select({
+      ios: 'Montserrat',
+      android: 'Montserrat-SemiBold'
+    }),
     marginLeft: measures.marginSmall
   },
   image: {

@@ -1,9 +1,13 @@
+import { Platform } from 'react-native';
 import colors from './colors';
 import measures from './measures';
 
 export default {
   text: {
-    fontFamily: 'Montserrat',
+    fontFamily: Platform.select({
+      ios: 'Montserrat',
+      android: 'Montserrat-Medium'
+    }),
     color: colors.black,
   },
   number: {

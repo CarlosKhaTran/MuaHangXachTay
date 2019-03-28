@@ -8,7 +8,8 @@ import {
   TextInput,
   Animated,
   Keyboard,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { SafeAreaView } from 'react-navigation';
@@ -235,6 +236,10 @@ const styles = StyleSheet.create({
     ...defaultStyles.text,
     fontSize: measures.fontSizeLarge + 2,
     fontWeight: '600',
+    fontFamily: Platform.select({
+      ios: 'Montserrat',
+      android: 'Montserrat-SemiBold'
+    }),
     color: colors.white,
   },
   cancelText: {

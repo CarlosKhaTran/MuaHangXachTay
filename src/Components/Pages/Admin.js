@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  InteractionManager,
   Image,
   TouchableOpacity
 } from 'react-native';
@@ -13,9 +12,6 @@ import {
   Container, Header, ExtraHeader, Content, Row, Button, Icon
 } from '../Widgets';
 import { Notify, Loading } from '../Global';
-import {
-  EditLayout
-} from '../Layouts';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
 import { fireNoti } from '../../api';
@@ -26,32 +22,12 @@ type Props = {
 type State = {
   itemName: string,
   price: string,
-  editEnabled: boolean,
-  updateConfig: Object,
   link: string,
   image: ?{
     uri: string,
   },
 };
 
-const editConfig: any = {
-  itemName: {
-    name: 'itemName',
-    typeName: 'input',
-    defaultValue: '',
-  },
-  link: {
-    name: 'link',
-    typeName: 'input',
-    defaultValue: '',
-  },
-  price: {
-    name: 'price',
-    typeName: 'input',
-    defaultValue: '',
-    keyboardType: 'numeric',
-  },
-};
 
 export default class Admin extends Component<Props, State> {
   state = {
@@ -59,21 +35,7 @@ export default class Admin extends Component<Props, State> {
     price: '',
     link: '',
     image: null,
-    editEnabled: false,
-    updateConfig: {},
   }
-
-  onEnableEdit = (infoName: string) => {
-    const { editEnabled } = this.state;
-    const defaultValue = this.state[infoName];
-    InteractionManager.runAfterInteractions(() => this.setState({
-      editEnabled: !editEnabled,
-      updateConfig: {
-        ...editConfig[infoName],
-        defaultValue,
-      },
-    }));
-  };
 
   onProcess = async () => {
     const {
@@ -143,8 +105,6 @@ export default class Admin extends Component<Props, State> {
     const {
       itemName,
       price,
-      updateConfig,
-      editEnabled,
       image,
       link,
     } = this.state;
@@ -163,7 +123,8 @@ export default class Admin extends Component<Props, State> {
               <Content>
                 <Text style={[styles.title, { marginTop: measures.marginMedium }]}>ĐƠN HÀNG</Text>
                 <Row
-                  onPress={() => this.onEnableEdit('itemName')}
+                  name="itemName"
+                  onChangeValue={this.onChangeValue}
                   first
                   title="Hàng cần bán"
                   placeHolder=""
@@ -171,7 +132,8 @@ export default class Admin extends Component<Props, State> {
                   editEnabled
                 />
                 <Row
-                  onPress={() => this.onEnableEdit('price')}
+                  name="price"
+                  onChangeValue={this.onChangeValue}
                   first
                   title="Giá"
                   placeHolder=""
@@ -179,7 +141,8 @@ export default class Admin extends Component<Props, State> {
                   editEnabled
                 />
                 <Row
-                  onPress={() => this.onEnableEdit('link')}
+                  name="link"
+                  onChangeValue={this.onChangeValue}
                   first
                   title="Link giới thiệu"
                   placeHolder=""
@@ -204,14 +167,6 @@ export default class Admin extends Component<Props, State> {
           </ScrollView>
           <Button block title="GỬI THÔNG TIN" type="primary" onPress={this.onProcess} />
         </View>
-        {editEnabled
-          && (
-            <EditLayout
-              config={updateConfig}
-              onChangeValue={this.onChangeValue}
-              onHide={this.onEnableEdit}
-            />
-          )}
       </Container>
     );
   }

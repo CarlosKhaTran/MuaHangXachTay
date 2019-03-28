@@ -56,22 +56,22 @@ export default class App extends Component<Props, State> {
       const {
         product, number, url, link
       } = _data;
-      this.navigator.dispatch(
-        NavigationActions.navigate({
-          routeName: SCREENS.PRODUCT,
-          key: SCREENS.PRODUCT,
-          params: {
-            product,
-            number,
-            url,
-            link,
-          }
-        })
-      );
+      if (this.navigator) {
+        this.navigator.dispatch(
+          NavigationActions.navigate({
+            routeName: SCREENS.PRODUCT,
+            key: SCREENS.PRODUCT,
+            params: {
+              product,
+              number,
+              url,
+              link,
+            }
+          })
+        );
+      }
     });
-
     firebase.notifications().onNotification((notification: Notification) => {
-      console.log('xxxx', notification);
       if (Platform.OS === 'ios') {
         const localNotification = new firebase.notifications.Notification()
           .setNotificationId(notification.notificationId)
@@ -97,7 +97,6 @@ export default class App extends Component<Props, State> {
           .setData(notification.data)
           .android.setChannelId('channelId') // e.g. the id you chose above
           .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
-          .android.setColor('#000000') // you can set a color here
           .android.setPriority(firebase.notifications.Android.Priority.High);
 
         firebase.notifications()

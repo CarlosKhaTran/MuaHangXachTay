@@ -106,3 +106,15 @@ export async function subscribeToTopic(token: string) {
     console.log(error);
   }
 }
+
+export async function getAllNoti() {
+  try {
+    const url = urls.getAllNoti();
+    const response = await axios.get(url);
+    const { data } = response.data;
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}

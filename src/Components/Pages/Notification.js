@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import {
   View, FlatList, Text, StyleSheet, TouchableOpacity, AsyncStorage
 } from 'react-native';
-import Swipeout from 'react-native-swipeout';
+// import Swipeout from 'react-native-swipeout';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Icon
 } from '../Widgets';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
+import { getAllNoti } from '../../api';
 
 type Props = {
   navigation: NavigationScreenProp<{}>
@@ -19,12 +20,12 @@ type State = {
 };
 
 type Noti = {
-  title: string,
-  description: string,
+  product: string,
+  number: string,
   type: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE',
   seen: boolean,
   url: ?string,
-  data: Object,
+  link: ?string,
 };
 
 export default class Notification extends Component<Props, State> {
@@ -33,9 +34,13 @@ export default class Notification extends Component<Props, State> {
   };
 
   async componentDidMount() {
-    const notifications = await AsyncStorage.getItem('notifications');
+    const notifications = await getAllNoti();
     this.setState({
-      notifications: notifications ? JSON.parse(notifications) : []
+      notifications: notifications.map(item => ({
+        ...item,
+        type: 'NEW_PRODUCT',
+        seen: false,
+      }))
     });
   }
 
@@ -69,7 +74,7 @@ export default class Notification extends Component<Props, State> {
     const { navigation } = this.props;
     const {
       product, number, url, link
-    } = item.data;
+    } = item;
     if (!item.seen) {
       const newNotifications = notifications.map((el: Noti, id: number) => (id !== index ? el : {
         ...el,
@@ -104,41 +109,40 @@ export default class Notification extends Component<Props, State> {
   };
 
   renderItem = ({ item, index }: { item: Noti, index: number }) => (
-    <Swipeout
-      backgroundColor={colors.transparent}
-      autoClose
-      right={[
-        {
-          text: 'Delete',
-          backgroundColor: colors.transparent,
-          color: colors.red,
-          onPress: () => this.onDelete(index)
-        }
-      ]}
+    // <Swipeout
+    //   backgroundColor={colors.transparent}
+    //   autoClose
+    //   right={[
+    //     {
+    //       text: 'Delete',
+    //       backgroundColor: colors.transparent,
+    //       color: colors.red,
+    //       onPress: () => this.onDelete(index)
+    //     }
+    //   ]}
+    // >
+    <TouchableOpacity
+      style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}
+      onPress={() => this.onOpen(item, index)}
     >
-      <TouchableOpacity
-        style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}
-        onPress={() => this.onOpen(item, index)}
-      >
-        <View style={styles.left}>
-          <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
-            {this.getIcon(item.type)}
-          </View>
+      <View style={styles.left}>
+        <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
+          {this.getIcon(item.type)}
         </View>
-        <View style={styles.middle}>
-          <Text style={styles.notiTitle}>
-            {item.title}
-            {!item.seen && <Text style={styles.new}> (New)</Text>}
-          </Text>
-          <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
-            {item.description}
-          </Text>
-        </View>
-        <View style={styles.right}>
-          <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
-        </View>
-      </TouchableOpacity>
-    </Swipeout>
+      </View>
+      <View style={styles.middle}>
+        <Text style={styles.notiTitle}>
+          {item.product}
+          {/* {!item.seen && <Text style={styles.new}> (New)</Text>} */}
+        </Text>
+        <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
+          {`${item.product} - ${item.number}`}
+        </Text>
+      </View>
+      <View style={styles.right}>
+        <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
+      </View>
+    </TouchableOpacity>
   );
 
   render() {

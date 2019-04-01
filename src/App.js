@@ -97,6 +97,7 @@ export default class App extends Component<Props, State> {
           .setData(notification.data)
           .android.setChannelId('channelId') // e.g. the id you chose above
           .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+          .android.setAutoCancel(true)
           .android.setPriority(firebase.notifications.Android.Priority.High);
 
         firebase.notifications()

@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   rowDetail: {
     ...defaultStyles.text,
     color: colors.black,
-    fontSize: measures.fontSizeMedium,
+    fontSize: measures.fontSizeLarge,
     marginLeft: measures.marginSmall,
     marginTop: measures.marginSmall,
     marginBottom: measures.marginSmall,
@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
   rowTitle: {
     ...defaultStyles.text,
     color: colors.primaryColor,
-    fontSize: measures.fontSizeMedium - 1,
+    fontSize: measures.fontSizeLarge + 1,
     marginLeft: measures.marginSmall,
     marginTop: measures.marginSmall,
   },
   textInput: {
     ...defaultStyles.text,
     color: colors.black,
-    fontSize: measures.fontSizeMedium,
+    fontSize: measures.fontSizeLarge,
     marginLeft: measures.marginSmall,
     marginTop: measures.marginSmall,
     paddingVertical: 0,

@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...defaultStyles.text,
-    fontSize: measures.fontSizeLarge + 2,
+    fontSize: measures.fontSizeLarge + 4,
     fontWeight: '600',
     fontFamily: Platform.select({
       ios: 'Montserrat',

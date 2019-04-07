@@ -499,13 +499,13 @@ export default class ShoppingCart extends Component<Props, State> {
 const styles = StyleSheet.create({
   title: {
     ...defaultStyles.text,
-    fontSize: measures.fontSizeMedium,
+    fontSize: measures.fontSizeLarge + 1,
     color: colors.black,
     fontFamily: Platform.select({
       ios: 'Montserrat',
       android: 'Montserrat-SemiBold'
     }),
-    marginLeft: measures.marginSmall
+    marginLeft: measures.marginMedium
   },
   image: {
     width: '100%',

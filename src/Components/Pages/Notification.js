@@ -3,46 +3,59 @@ import React, { Component } from 'react';
 import {
   View, FlatList, Text, StyleSheet, TouchableOpacity, AsyncStorage
 } from 'react-native';
-// import Swipeout from 'react-native-swipeout';
+import Swipeout from 'react-native-swipeout';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Icon
 } from '../Widgets';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
-import { getAllNoti } from '../../api';
 
 type Props = {
   navigation: NavigationScreenProp<{}>
 };
 type State = {
-  notifications: Array<Noti>
+  notifications: Array<Noti>,
+  deleteStore: { [string]: boolean },
+  seenStore: { [string]: boolean }
 };
 
 type Noti = {
   product: string,
+  id: string,
   number: string,
   type: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE',
   seen: boolean,
   url: ?string,
-  link: ?string,
+  link: ?string
 };
 
 export default class Notification extends Component<Props, State> {
   state = {
-    notifications: []
+    notifications: [],
+    deleteStore: {},
+    seenStore: {}
   };
 
   async componentDidMount() {
-    const notifications = await getAllNoti();
-    this.setState({
-      notifications: notifications.map(item => ({
-        ...item,
-        type: 'NEW_PRODUCT',
-        seen: false,
-      }))
-    });
+    const deleteStore = (await AsyncStorage.getItem('deleteStore')) || '{}';
+    const seenStore = (await AsyncStorage.getItem('seenStore')) || '{}';
+    this.setState(
+      {
+        deleteStore: JSON.parse(deleteStore),
+        seenStore: JSON.parse(seenStore)
+      },
+      this.prepareData
+    );
   }
+
+  prepareData = async () => {
+    const { navigation } = this.props;
+    const allNoti = navigation.getParam('notifications');
+    this.setState({
+      notifications: allNoti
+    });
+  };
 
   onBack = () => {
     const { navigation } = this.props;
@@ -60,30 +73,43 @@ export default class Notification extends Component<Props, State> {
     }
   };
 
-  onDelete = (index: number) => {
-    const { notifications } = this.state;
-    const newNotifications = notifications.filter((item: Noti, id: number) => id !== index);
+  onDelete = (item: Noti) => {
+    const { deleteStore } = this.state;
     this.setState({
-      notifications: newNotifications
+      deleteStore: {
+        ...deleteStore,
+        [item.id]: true
+      }
     });
-    AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
+    AsyncStorage.setItem(
+      'deleteStore',
+      JSON.stringify({
+        ...deleteStore,
+        [item.id]: true
+      })
+    );
   };
 
-  onOpen = (item: Noti, index: number) => {
-    const { notifications } = this.state;
+  onOpen = (item: Noti) => {
+    const { seenStore } = this.state;
     const { navigation } = this.props;
     const {
       product, number, url, link
     } = item;
     if (!item.seen) {
-      const newNotifications = notifications.map((el: Noti, id: number) => (id !== index ? el : {
-        ...el,
-        seen: true,
-      }));
       this.setState({
-        notifications: newNotifications
+        seenStore: {
+          ...seenStore,
+          [item.id]: true
+        }
       });
-      AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
+      AsyncStorage.setItem(
+        'seenStore',
+        JSON.stringify({
+          ...seenStore,
+          [item.id]: true
+        })
+      );
     }
     navigation.navigate({
       routeName: SCREENS.PRODUCT,
@@ -95,7 +121,7 @@ export default class Notification extends Component<Props, State> {
         link
       }
     });
-  }
+  };
 
   getIcon = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {
     switch (color) {
@@ -109,44 +135,51 @@ export default class Notification extends Component<Props, State> {
   };
 
   renderItem = ({ item, index }: { item: Noti, index: number }) => (
-    // <Swipeout
-    //   backgroundColor={colors.transparent}
-    //   autoClose
-    //   right={[
-    //     {
-    //       text: 'Delete',
-    //       backgroundColor: colors.transparent,
-    //       color: colors.red,
-    //       onPress: () => this.onDelete(index)
-    //     }
-    //   ]}
-    // >
-    <TouchableOpacity
-      style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}
-      onPress={() => this.onOpen(item, index)}
+    <Swipeout
+      backgroundColor={colors.transparent}
+      autoClose
+      right={[
+        {
+          text: 'Delete',
+          backgroundColor: colors.transparent,
+          color: colors.red,
+          onPress: () => this.onDelete(item)
+        }
+      ]}
     >
-      <View style={styles.left}>
-        <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
-          {this.getIcon(item.type)}
+      <TouchableOpacity
+        style={[styles.rowContainer, index === 0 && { borderTopWidth: 0 }]}
+        onPress={() => this.onOpen(item)}
+      >
+        <View style={styles.left}>
+          <View style={[styles.middleLeft, { backgroundColor: this.getColor(item.type) }]}>
+            {this.getIcon(item.type)}
+          </View>
         </View>
-      </View>
-      <View style={styles.middle}>
-        <Text style={styles.notiTitle}>
-          {item.product}
-          {/* {!item.seen && <Text style={styles.new}> (New)</Text>} */}
-        </Text>
-        <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
-          {`${item.product} - ${item.number}`}
-        </Text>
-      </View>
-      <View style={styles.right}>
-        <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
-      </View>
-    </TouchableOpacity>
+        <View style={styles.middle}>
+          <Text style={styles.notiTitle}>
+            {item.product}
+            {!item.seen && <Text style={styles.new}> (New)</Text>}
+          </Text>
+          <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">
+            {`${item.product} - ${item.number}`}
+          </Text>
+        </View>
+        <View style={styles.right}>
+          <Icon size="small" name="chevron-right" color={colors.gray} type="mdc" />
+        </View>
+      </TouchableOpacity>
+    </Swipeout>
   );
 
   render() {
-    const { notifications } = this.state;
+    const { notifications, deleteStore, seenStore } = this.state;
+    const data = notifications
+      .map(item => ({
+        ...item,
+        seen: seenStore[item.id] || false
+      }))
+      .filter(item => !deleteStore[item.id]);
     return (
       <Container>
         <Header title="THÔNG BÁO" handleLeftButton={this.onBack} />
@@ -154,7 +187,7 @@ export default class Notification extends Component<Props, State> {
           <ExtraHeader />
           <FlatList
             contentContainerStyle={styles.content}
-            data={notifications}
+            data={data}
             renderItem={this.renderItem}
             extraData={this.state}
             keyExtractor={(item, index) => index.toString()}

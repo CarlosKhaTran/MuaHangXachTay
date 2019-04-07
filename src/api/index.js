@@ -107,7 +107,7 @@ export async function subscribeToTopic(token: string) {
   }
 }
 
-export async function getAllNoti() {
+export async function getAllNoti(): Promise<any> {
   try {
     const url = urls.getAllNoti();
     const response = await axios.get(url);

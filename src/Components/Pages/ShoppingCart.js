@@ -12,6 +12,7 @@ import {
   Platform,
   InteractionManager,
   AsyncStorage,
+  CameraRoll,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -22,12 +23,21 @@ import {
 import { EditLayout } from '../Layouts';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
-import { sendEmail } from '../../api';
+import { sendEmail, getAllNoti } from '../../api';
 import { Notify, Loading } from '../Global';
 // import console = require('console');
 
-
 const requireCheck = ['name', 'number', 'phone', 'product'];
+
+type Noti = {
+  id: string,
+  product: string,
+  number: string,
+  seen: boolean,
+  type: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE',
+  url?: string,
+  link?: string
+};
 type Props = {
   navigation: NavigationScreenProp<{}>
 };
@@ -45,13 +55,15 @@ type State = {
   nameError: boolean,
   phoneError: boolean,
   productError: boolean,
+  notiCount: number,
   numberError: boolean,
   image: ?{
     uri: string,
     type: string,
     fileName: string
   },
-  loginAttempt: number
+  loginAttempt: number,
+  notifications: Array<Noti>
 };
 const editConfig: any = {
   date: {
@@ -75,7 +87,7 @@ const editConfig: any = {
         value: '1 tháng'
       }
     ]
-  },
+  }
 };
 
 export default class ShoppingCart extends Component<Props, State> {
@@ -96,25 +108,25 @@ export default class ShoppingCart extends Component<Props, State> {
     nameError: false,
     phoneError: false,
     productError: false,
+    notiCount: 0,
     numberError: false,
     editEnabled: false,
     updateConfig: {},
     image: null,
-    loginAttempt: 0
+    loginAttempt: 0,
+    notifications: []
   };
 
   async componentDidMount() {
-
     this.didFocusSubscription = this.props.navigation.addListener('didFocus', () => {
-      const {
-        product, cost,
-      } = this.state;
+      const { product, cost } = this.state;
       const productReceived = this.props.navigation.getParam('product');
       const priceReceived = this.props.navigation.getParam('price');
       this.setState({
         product: productReceived || product,
-        cost: priceReceived || cost,
+        cost: priceReceived || cost
       });
+      this.getNoti();
     });
     this.willBlurSubscription = this.props.navigation.addListener('willBlur', () => BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress));
     const nameReceived = await AsyncStorage.getItem('name');
@@ -123,7 +135,7 @@ export default class ShoppingCart extends Component<Props, State> {
     this.setState({
       name: nameReceived || '',
       phone: phoneReceived || '',
-      address: addressReceived || '',
+      address: addressReceived || ''
     });
   }
 
@@ -132,7 +144,24 @@ export default class ShoppingCart extends Component<Props, State> {
     if (this.willBlurSubscription) this.willBlurSubscription.remove();
   }
 
-  handleBackPress = () => false
+  getNoti = async () => {
+    const allNoti: Array<Noti> = await getAllNoti();
+    const notifications = allNoti.map((item: Noti) => ({
+      ...item,
+      type: 'NEW_PRODUCT'
+    }));
+    const deleteStore = (await AsyncStorage.getItem('deleteStore')) || '{}';
+    const seenStore = (await AsyncStorage.getItem('seenStore')) || '{}';
+    const notiCount = allNoti.filter(
+      item => !JSON.parse(seenStore)[item.id] && !JSON.parse(deleteStore)[item.id]
+    ).length;
+    this.setState({
+      notifications,
+      notiCount
+    });
+  };
+
+  handleBackPress = () => false;
 
   onEnableEdit = (infoName: string) => {
     const { editEnabled } = this.state;
@@ -153,9 +182,9 @@ export default class ShoppingCart extends Component<Props, State> {
     }
     const newValue = isAscend ? _.parseInt(value) + 1 : _.parseInt(value) - 1;
     this.setState({
-      [name]: newValue < 0 ? '0' : newValue.toString(),
+      [name]: newValue < 0 ? '0' : newValue.toString()
     });
-  }
+  };
 
   onProcess = async () => {
     const {
@@ -206,30 +235,38 @@ export default class ShoppingCart extends Component<Props, State> {
     this.setState(state => ({
       ...state,
       [infoName]: value,
-      [`${infoName}Error`]: false,
+      [`${infoName}Error`]: false
     }));
   };
 
   onOpenNotification = () => {
     const { navigation } = this.props;
+    const { notifications } = this.state;
     navigation.navigate({
       routeName: SCREENS.NOTIFICATION,
-      key: SCREENS.NOTIFICATION
+      key: SCREENS.NOTIFICATION,
+      params: {
+        notifications
+      }
     });
   };
 
   onSelectImage = async (camera: boolean) => {
     const image: { path: string, mime: string, filename: string } = camera
       ? await ImagePicker.openCamera({
-        multiple: false,
-      }) : await ImagePicker.openPicker({
-        multiple: false,
+        multiple: false
+      })
+      : await ImagePicker.openPicker({
+        multiple: false
       });
+    if (camera) {
+      CameraRoll.saveToCameraRoll(image.path, 'photo');
+    }
     this.setState({
       image: {
         uri: image.path,
         type: image.mime,
-        fileName: image.filename,
+        fileName: image.filename
       }
     });
   };
@@ -258,15 +295,55 @@ export default class ShoppingCart extends Component<Props, State> {
       '',
       [
         { text: 'Thư viện', onPress: () => this.onSelectImage(false) },
-        { text: 'Máy ảnh', onPress: () => this.onSelectImage(true) },
+        { text: 'Máy ảnh', onPress: () => this.onSelectImage(true) }
       ],
-      { cancelable: true },
+      { cancelable: true }
     );
-  }
+  };
 
-  didFocusSubscription: any
+  didFocusSubscription: any;
 
-  willBlurSubscription: any
+  willBlurSubscription: any;
+
+  renderBell = () => {
+    const { notiCount } = this.state;
+    switch (notiCount) {
+      case 0:
+        return (
+          <View>
+            <Icon name="bell" type="ent" color={colors.gray} />
+          </View>
+        );
+      default:
+        return (
+          <View>
+            <Icon name="bell" type="ent" color={colors.mango} />
+            <View style={{
+              position: 'absolute',
+              top: -measures.defaultUnit + 3,
+              left: measures.defaultUnit * 2,
+              width: measures.defaultUnit * 2,
+              height: measures.defaultUnit * 2,
+              borderRadius: measures.defaultUnit,
+              backgroundColor: colors.lightGray,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            >
+              <Text style={{
+                ...defaultStyles.text,
+                fontWeight: 'bold',
+                fontSize: measures.fontSizeSmall,
+                color: colors.rose,
+              }}
+              >
+                {notiCount}
+              </Text>
+            </View>
+          </View>
+        );
+    }
+  };
 
   render() {
     const {
@@ -291,7 +368,7 @@ export default class ShoppingCart extends Component<Props, State> {
         <Header
           handleSecretAction={this.handleSecretAction}
           title="ĐƠN HÀNG"
-          rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
+          rightIcon={this.renderBell()}
           handleRightButton={this.onOpenNotification}
         />
         <View style={defaultStyles.fill}>
@@ -359,7 +436,7 @@ export default class ShoppingCart extends Component<Props, State> {
             <Content>
               <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
                 THÔNG TIN BỔ SUNG (Không bắt buộc)
-                </Text>
+              </Text>
               <Row
                 first
                 title="Giá mong muốn"

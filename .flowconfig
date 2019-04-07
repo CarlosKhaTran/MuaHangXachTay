@@ -87,8 +87,7 @@ unsafe-getters-setters=warn
 inexact-spread=warn
 unnecessary-invariant=warn
 deprecated-call-syntax=warn
-signature-verification-failure=warn
-deprecated-utility=error
+; deprecated-utility=error
 
 [strict]
 deprecated-type

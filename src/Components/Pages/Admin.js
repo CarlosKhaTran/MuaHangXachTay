@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
+  CameraRoll,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -72,18 +74,31 @@ export default class Admin extends Component<Props, State> {
     }));
   };
 
-  onOpenNotification = () => {
-    const { navigation } = this.props;
-    navigation.navigate({
-      routeName: SCREENS.NOTIFICATION,
-      key: SCREENS.NOTIFICATION,
-    });
-  }
+  openAlert = () => {
+    Alert.alert(
+      'Chọn ảnh',
+      '',
+      [
+        { text: 'Thư viện', onPress: () => this.onSelectImage(false) },
+        { text: 'Máy ảnh', onPress: () => this.onSelectImage(true) }
+      ],
+      { cancelable: true }
+    );
+  };
 
-  onSelectImage = async () => {
-    const image: { path: string, mime: string, filename: string } = await ImagePicker.openPicker({
+  onSelectImage = async (camera: boolean) => {
+    const image: {
+      path: string,
+      mime: string,
+      filename: string
+    } = !camera ? await ImagePicker.openPicker({
+      multiple: false
+    }) : await ImagePicker.openCamera({
       multiple: false
     });
+    if (camera) {
+      CameraRoll.saveToCameraRoll(image.path, 'photo');
+    }
     this.setState({
       image: {
         uri: image.path,
@@ -113,7 +128,6 @@ export default class Admin extends Component<Props, State> {
         <Header
           title="ĐƠN HÀNG"
           rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
-          handleRightButton={this.onOpenNotification}
           handleLeftButton={this.onBack}
         />
         <View style={defaultStyles.fill}>
@@ -153,7 +167,7 @@ export default class Admin extends Component<Props, State> {
             </Transition>
             <Transition appear="right">
               <Content>
-                <TouchableOpacity onPress={this.onSelectImage}>
+                <TouchableOpacity onPress={this.openAlert}>
                   <Text style={[styles.title, { marginTop: measures.marginMedium }]}>
                     {'HÌNH ẢNH '}
                     <Icon name="ios-camera" color={colors.blue} />

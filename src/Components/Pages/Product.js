@@ -76,8 +76,6 @@ export default class Product extends Component<Props, State> {
       <Container>
         <Header
           title="ĐƠN HÀNG"
-          rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
-          handleRightButton={this.onOpenNotification}
           handleLeftButton={this.onBack}
         />
         <View style={defaultStyles.fill}>

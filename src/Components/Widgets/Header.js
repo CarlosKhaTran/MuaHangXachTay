@@ -146,7 +146,7 @@ export default class Header extends Component<Props, State> {
         >
           <Image
             source={require('../../assets/images/plane.png')}
-            style={{ height: '100%', width: '100%', marginLeft: 100 }}
+            style={{ height: '100%', width: '100%', marginLeft: -50, opacity: 0.3 }}
           />
         </LinearGradient>
         <View style={styles.content}>

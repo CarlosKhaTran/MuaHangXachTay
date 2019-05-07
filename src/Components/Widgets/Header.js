@@ -29,11 +29,11 @@ type Props = {
   onBlurSearch: ?Function,
   onChangeSearchText: Function,
   isTransparent: boolean,
-  anim?: boolean,
+  anim?: boolean
 };
 type State = {
   keyboardOpen: boolean,
-  buttonAnimation: Animated.Value,
+  buttonAnimation: Animated.Value
 };
 
 export default class Header extends Component<Props, State> {
@@ -44,12 +44,12 @@ export default class Header extends Component<Props, State> {
     leftIcon: undefined,
     anim: false,
     rightIcon: undefined,
-    handleSecretAction: () => {},
-  }
+    handleSecretAction: () => {}
+  };
 
   state = {
     keyboardOpen: false,
-    buttonAnimation: new Animated.Value(0),
+    buttonAnimation: new Animated.Value(0)
   };
 
   componentDidMount() {
@@ -72,7 +72,7 @@ export default class Header extends Component<Props, State> {
     const { onfocusSearch, onChangeSearchText, onBlurSearch } = this.props;
     Animated.timing(buttonAnimation, {
       toValue: keyboardOpen ? measures.defaultUnit * 7 : 0,
-      duration: 300,
+      duration: 300
     }).start();
     return (
       <View style={styles.searchBarContainer}>
@@ -120,21 +120,22 @@ export default class Header extends Component<Props, State> {
       rightIcon,
       isTransparent,
       handleSecretAction,
-      anim,
+      anim
     } = this.props;
     const titleText = (
       <View style={styles.middle}>
-        <Text style={styles.title} onPress={handleSecretAction}>{title}</Text>
+        <Text style={styles.title} onPress={handleSecretAction}>
+          {title}
+        </Text>
       </View>
     );
     return (
       <View
-        source={require('../../assets/images/plane.png')}
         style={[
           styles.container,
           containSearchBar && {
-            height: measures.defaultUnit * 17,
-          },
+            height: measures.defaultUnit * 17
+          }
         ]}
       >
         <SafeAreaView />
@@ -144,39 +145,35 @@ export default class Header extends Component<Props, State> {
           end={{ x: 0, y: 0 }}
           start={{ x: 1, y: 0 }}
         >
-          <Image
-            source={require('../../assets/images/plane.png')}
-            style={{ height: '100%', width: '100%', marginLeft: -50, opacity: 0.3 }}
-          />
+          <Image source={require('../../assets/images/plane.png')} style={styles.airPlane} />
         </LinearGradient>
-        <View style={styles.content}>
-          <View style={styles.left}>
-            {handleLeftButton && (
-              <TouchableOpacity style={styles.leftButton} onPress={handleLeftButton}>
-                {leftIcon === undefined ? (
-                  <Icon
-                    name="ios-arrow-back"
-                    size={30}
-                    color={isTransparent ? colors.gray : 'white'}
-                  />
-                ) : leftIcon}
-              </TouchableOpacity>
-            )}
-          </View>
-          {anim ? (
-            <Transition appear="top">
-              {titleText}
-            </Transition>
-          ) : titleText}
-          <View style={styles.right}>
-            {handleRightButton && (
-              <TouchableOpacity style={styles.leftButton} onPress={handleRightButton}>
-                {rightIcon}
-              </TouchableOpacity>
-            )}
+        <View style={{ height: measures.defaultUnit * 10 }}>
+          <View style={styles.content}>
+            <View style={styles.left}>
+              {handleLeftButton && (
+                <TouchableOpacity style={styles.leftButton} onPress={handleLeftButton}>
+                  {leftIcon === undefined ? (
+                    <Icon
+                      name="ios-arrow-back"
+                      size={30}
+                      color={isTransparent ? colors.gray : 'white'}
+                    />
+                  ) : (
+                    leftIcon
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+            {anim ? <Transition appear="top">{titleText}</Transition> : titleText}
+            <View style={styles.right}>
+              {handleRightButton && (
+                <TouchableOpacity style={styles.leftButton} onPress={handleRightButton}>
+                  {rightIcon}
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
-        {containSearchBar && this.renderSearchbar()}
       </View>
     );
   }
@@ -184,14 +181,14 @@ export default class Header extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   container: {
-    height: measures.defaultUnit * 10,
+    height: measures.defaultUnit * 15,
     backgroundColor: colors.primaryColor,
-    zIndex: 0,
+    zIndex: 0
   },
   searchBarContainer: {
     flex: 1,
     padding: measures.paddingSmall,
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   searchTextInput: {
     backgroundColor: colors.white,
@@ -200,37 +197,37 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: measures.paddingSmall,
-    marginLeft: measures.marginSmall,
+    marginLeft: measures.marginSmall
   },
   textInput: {
     flex: 1,
-    marginLeft: measures.marginSmall,
+    marginLeft: measures.marginSmall
   },
   content: {
     flex: 1,
     // paddingTop: measures.paddingSmall + 4,
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   left: {
     width: measures.defaultUnit * 6,
     justifyContent: 'center',
-    paddingLeft: measures.paddingMedium,
+    paddingLeft: measures.paddingMedium
   },
   right: {
     width: measures.defaultUnit * 6,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   middle: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   gradient: {
     height: '100%',
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 0,
+    zIndex: 0
   },
   title: {
     ...defaultStyles.text,
@@ -240,19 +237,26 @@ const styles = StyleSheet.create({
       ios: 'Montserrat',
       android: 'Montserrat-SemiBold'
     }),
-    color: colors.white,
+    color: colors.white
   },
   cancelText: {
     ...defaultStyles.text,
     fontSize: measures.fontSizeMedium,
     color: colors.white,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   icon: {
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   cancelbutton: {
     height: measures.defaultUnit * 5,
-    paddingLeft: measures.paddingSmall,
+    paddingLeft: measures.paddingSmall
   },
+  airPlane: {
+    height: '100%',
+    width: '100%',
+    marginLeft: -50,
+    opacity: 0.2,
+    resizeMode: 'contain'
+  }
 });

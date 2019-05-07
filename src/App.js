@@ -30,7 +30,6 @@ export default class App extends Component<Props, State> {
       subscribeToTopic(token);
       this.configFirebase();
     } else {
-      // user doesn't have permission
       try {
         await firebase.messaging().requestPermission();
         const token = await firebase.messaging().getToken();
@@ -86,10 +85,7 @@ export default class App extends Component<Props, State> {
           .displayNotification(localNotification)
           .catch(err => console.error(err));
       } else {
-        const localNotification = new firebase.notifications.Notification({
-          sound: 'default',
-          show_in_foreground: true,
-        })
+        const localNotification = new firebase.notifications.Notification()
           .setNotificationId(notification.notificationId)
           .setTitle(notification.title)
           .setSubtitle(notification.subtitle)

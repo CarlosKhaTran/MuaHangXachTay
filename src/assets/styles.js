@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 import colors from './colors';
-import measures from './measures';
 
 export default {
   text: {
@@ -23,7 +22,7 @@ export default {
   shadow: {
     shadowOpacity: 0.1,
     elevation: 2,
-    borderRadius: measures.borderRadius,
+    // borderRadius: measures.borderRadius,
     shadowColor: colors.gray,
     shadowOffset: {
       width: 1,

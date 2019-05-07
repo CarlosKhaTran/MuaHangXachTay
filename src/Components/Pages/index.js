@@ -5,3 +5,4 @@ export { default as Notification } from './Notification';
 export { default as AdminLogin } from './AdminLogin';
 export { default as Admin } from './Admin';
 export { default as Product } from './Product';
+export { default as ShopMenu } from './ShopMenu';

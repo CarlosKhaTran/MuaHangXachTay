@@ -6,4 +6,5 @@ export default {
   ADMIN_LOGIN: 'ADMIN_LOGIN',
   ADMIN: 'ADMIN',
   PRODUCT: 'PRODUCT',
+  SHOP_MENU: 'SHOP_MENU',
 };

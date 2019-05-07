@@ -26,12 +26,12 @@ type Props = {
   name: string,
   onChangeValue: Function,
 };
-const renderAdjustButton = (onAdjust: Function, name: string) => (
+const renderAdjustButton = (onAdjust: ?Function, name: string) => (
   <View style={styles.adjustButtonContainer}>
-    <TouchableOpacity style={[defaultStyles.fill, { alignItem: 'center' }]} onPress={() => onAdjust(name, true)}>
+    <TouchableOpacity style={[defaultStyles.fill, { alignItem: 'center' }]} onPress={() => onAdjust && onAdjust(name, true)}>
       <Icon type="ant" name="caretup" size={15} color={colors.gray} />
     </TouchableOpacity>
-    <TouchableOpacity style={[defaultStyles.fill, { justifyContent: 'flex-end' }]} onPress={() => onAdjust(name, false)}>
+    <TouchableOpacity style={[defaultStyles.fill, { justifyContent: 'flex-end' }]} onPress={() => onAdjust && onAdjust(name, false)}>
       <Icon type="ant" name="caretdown" size={15} color={colors.gray} />
     </TouchableOpacity>
   </View>

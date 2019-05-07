@@ -1,3 +1,4 @@
+
 // @flow
 import React, { Component } from 'react';
 import _ from 'lodash';
@@ -206,6 +207,7 @@ export default class ShoppingCart extends Component<Props, State> {
     try {
       Loading.show();
       const rs = await sendEmail({
+        // $FlowIgnore: suppressing this error
         image,
         name,
         address,
@@ -301,6 +303,11 @@ export default class ShoppingCart extends Component<Props, State> {
     );
   };
 
+  openDrawer = () => {
+    const { navigation } = this.props;
+    navigation.toggleDrawer();
+  }
+
   didFocusSubscription: any;
 
   willBlurSubscription: any;
@@ -345,6 +352,12 @@ export default class ShoppingCart extends Component<Props, State> {
     }
   };
 
+  renderMenu = () => (
+    <View>
+      <Icon name="hamburger" type="mdc" color={colors.white} />
+    </View>
+  )
+
   render() {
     const {
       name,
@@ -366,6 +379,8 @@ export default class ShoppingCart extends Component<Props, State> {
     return (
       <Container>
         <Header
+          leftIcon={this.renderMenu()}
+          handleLeftButton={this.openDrawer}
           handleSecretAction={this.handleSecretAction}
           title="ĐƠN HÀNG"
           rightIcon={this.renderBell()}
@@ -373,6 +388,7 @@ export default class ShoppingCart extends Component<Props, State> {
         />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
+          {/* // $FlowIgnore: suppressing this error */}
           <KeyboardAwareScrollView>
             <Content>
               <Text style={styles.title}>THÔNG TIN CÁ NHÂN</Text>
@@ -491,6 +507,7 @@ export default class ShoppingCart extends Component<Props, State> {
             onHide={this.onEnableEdit}
           />
         )}
+        {/* <TouchableOpacity style={styles.shoppingButton} /> */}
       </Container>
     );
   }
@@ -519,5 +536,15 @@ const styles = StyleSheet.create({
     height: ((measures.width - 4 * measures.marginMedium) * 2) / 3,
     ...defaultStyles.shadow,
     alignSelf: 'center'
-  }
+  },
+  shoppingButton: {
+    height: measures.defaultUnit * 8,
+    width: measures.defaultUnit * 8,
+    borderRadius: measures.defaultUnit * 4,
+    backgroundColor: colors.rose,
+    position: 'absolute',
+    bottom: measures.marginMedium,
+    right: measures.marginMedium,
+    ...defaultStyles.shadow,
+  },
 });

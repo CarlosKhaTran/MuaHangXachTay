@@ -26,7 +26,7 @@ export default class LoadingPage extends Component<Props, State> {
         const resetAction = StackActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({
-            routeName: SCREENS.SHOPPING_CART, key: SCREENS.SHOPPING_CART
+            routeName: SCREENS.SHOP_MENU, key: SCREENS.SHOP_MENU,
           })],
         });
         navigation.dispatch(resetAction);

@@ -1,12 +1,14 @@
 // @flow
 import { createFluidNavigator } from 'react-navigation-fluid-transitions';
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, createDrawerNavigator } from 'react-navigation';
 import * as pages from '../Components/Pages';
+import * as layouts from '../Components/Layouts';
 import SCREENS from './screens';
+import { measures } from '../assets';
 
 export { default as SCREENS } from './screens';
 
-export default createAppContainer(createFluidNavigator(
+const stack = createFluidNavigator(
   {
     [SCREENS.LOADING]: {
       screen: pages.Loading,
@@ -28,10 +30,29 @@ export default createAppContainer(createFluidNavigator(
     },
     [SCREENS.PRODUCT]: {
       screen: pages.Product,
-    }
+    },
+    [SCREENS.SHOP_MENU]: {
+      screen: pages.ShopMenu,
+    },
   },
   {
     headerMode: 'none',
     navigationOptions: { gesturesEnabled: false },
   }
-));
+);
+
+const drawerConfig = {
+  drawerOpenRoute: 'DrawerOpen',
+  drawerCloseRoute: 'DrawerClose',
+  drawerPosition: 'left',
+  drawerToggleRoute: 'DrawerToggle',
+  drawerLockMode: 'locked-closed',
+  drawerWidth: measures.width * 0.8,
+  contentComponent: layouts.Drawer,
+};
+
+export default createAppContainer(createDrawerNavigator({
+  MainScreen: {
+    screen: stack,
+  },
+}, drawerConfig));

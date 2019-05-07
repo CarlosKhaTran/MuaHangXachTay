@@ -64,7 +64,7 @@ export const fireNoti = async ({
   number,
   link,
 }: {
-  image: Object,
+  image: ?Object,
   product: string,
   number: string,
   link: string,

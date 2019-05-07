@@ -27,6 +27,9 @@ target 'MuaHangXachTay' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
 
+
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
 end
 post_install do |installer|
   installer.pods_project.targets.each do |target|

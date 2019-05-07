@@ -1,7 +1,6 @@
 [ignore]
 ; We fork some components by platform
 .*/*[.]android.js
-
 ; Ignore templates for 'react-native init'
 <PROJECT_ROOT>/template/.*
 
@@ -40,7 +39,7 @@ flow/
 
 [options]
 emoji=true
-
+suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
 esproposal.optional_chaining=enable
 esproposal.nullish_coalescing=enable
 
@@ -99,4 +98,4 @@ untyped-import
 untyped-type-import
 
 [version]
-^0.94.0
+0.86.0

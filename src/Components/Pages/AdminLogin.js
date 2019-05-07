@@ -71,6 +71,7 @@ export default class AdminLogIn extends Component<Props, State> {
         <View style={defaultStyles.fill}>
           <ExtraHeader />
           <Content fill>
+            {/* // $FlowIgnore: suppressing this error */}
             <KeyboardAwareScrollView contentContainerStyle={styles.contentWrapper}>
               <Text style={styles.text}>VUI LÒNG NHẬP THÔNG TIN</Text>
               <Input

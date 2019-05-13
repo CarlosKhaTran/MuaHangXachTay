@@ -34,6 +34,18 @@ const stack = createFluidNavigator(
     [SCREENS.SHOP_MENU]: {
       screen: pages.ShopMenu,
     },
+    [SCREENS.SUPPORT]: {
+      screen: pages.Support
+    },
+    [SCREENS.CONTACT]: {
+      screen: pages.Contact
+    },
+    [SCREENS.SETTING]: {
+      screen: pages.Setting
+    },
+    [SCREENS.REGISTER]: {
+      screen: pages.Register
+    }
   },
   {
     headerMode: 'none',

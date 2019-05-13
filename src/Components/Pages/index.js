@@ -6,3 +6,7 @@ export { default as AdminLogin } from './AdminLogin';
 export { default as Admin } from './Admin';
 export { default as Product } from './Product';
 export { default as ShopMenu } from './ShopMenu';
+export { default as Support } from './Support';
+export { default as Contact } from './Contact';
+export { default as Setting } from './Setting';
+export { default as Register } from './Register';

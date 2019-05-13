@@ -6,38 +6,69 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { Container, Icon, Button } from '../Widgets';
 import { colors, measures, defaultStyles } from '../../assets';
+import SCREENS from '../../routers/screens';
 
 type Props = {};
 
 const rows: Array<{
   title: string,
   iconType?: string,
-  iconName: string
+  iconName: string,
+  screen: string,
 }> = [
-  {
-    title: 'Trang chủ',
-    iconName: 'ios-home'
-  },
-  {
-    title: 'Thông báo',
-    iconName: 'bell',
-    iconType: 'ent'
-  },
-  {
-    title: 'Hỗ trợ',
-    iconName: 'ios-help-buoy'
-  },
-  {
-    title: 'Cài đặt',
-    iconName: 'ios-settings'
-  },
-  {
-    title: 'Liên hệ',
-    iconName: 'ios-mail'
-  }
-];
+    {
+      title: 'Trang chủ',
+      iconName: 'ios-home',
+      screen: SCREENS.ADMIN
+    },
+    {
+      title: 'Thông báo',
+      iconName: 'bell',
+      iconType: 'ent',
+      screen: SCREENS.NOTIFICATION
+    },
+    {
+      title: 'Điều khoản dịch vụ',
+      iconName: 'ios-help-buoy',
+      screen: SCREENS.SUPPORT
+    },
+    {
+      title: 'Cài đặt',
+      iconName: 'ios-settings',
+      screen: SCREENS.SETTING
+    },
+    {
+      title: 'Liên hệ',
+      iconName: 'ios-mail',
+      screen: SCREENS.CONTACT
+    }
+  ];
 
 export default class Drawer extends React.PureComponent<Props> {
+
+  navigate = (screenName: string) => {
+    const { navigation } = this.props;
+    if (screenName ==  SCREENS.NOTIFICATION) {
+      this.onOpenNotification()
+    }
+    navigation.navigate({
+      routeName: screenName,
+      key: screenName,
+    });
+  };
+
+  onOpenNotification = () => {
+    const { navigation } = this.props;
+    const { notifications } = this.state;
+    navigation.navigate({
+      routeName: SCREENS.NOTIFICATION,
+      key: SCREENS.NOTIFICATION,
+      params: {
+        notifications
+      }
+    });
+  };
+
   render() {
     return (
       <Container>
@@ -58,7 +89,11 @@ export default class Drawer extends React.PureComponent<Props> {
         </LinearGradient>
         <ScrollView>
           {rows.map((item, index) => (
-            <TouchableOpacity style={styles.row} key={index.toString()}>
+            <TouchableOpacity
+              style={styles.row}
+              key={index.toString()}
+              onPress={() => this.navigate(item.screen)}
+            >
               <View style={styles.left}>
                 <Icon
                   name={item.iconName}
@@ -82,6 +117,7 @@ export default class Drawer extends React.PureComponent<Props> {
           ))}
         </ScrollView>
         <Button type="secondary" title="Đăng nhập" />
+        <Button type="primary" title="Đăng ký" onPress={() => {this.navigate(SCREENS.REGISTER)}}/>
       </Container>
     );
   }

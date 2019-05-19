@@ -4,20 +4,20 @@ import colors from './colors';
 export default {
   text: {
     fontFamily: Platform.select({
-      ios: 'Montserrat',
-      android: 'Montserrat-Medium'
+      ios: 'Quicksand',
+      android: 'Quicksand-Medium'
     }),
-    color: colors.black,
+    color: colors.black
   },
   number: {
-    fontFamily: null,
+    fontFamily: null
   },
   center: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   fill: {
-    flex: 1,
+    flex: 1
   },
   shadow: {
     shadowOpacity: 0.1,
@@ -26,7 +26,7 @@ export default {
     shadowColor: colors.gray,
     shadowOffset: {
       width: 1,
-      height: 1,
-    },
-  },
+      height: 1
+    }
+  }
 };

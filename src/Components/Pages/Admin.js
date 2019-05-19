@@ -1,11 +1,14 @@
 // @flow
 import React, { Component } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
   Image,
   TouchableOpacity,
   Alert,
-  CameraRoll,
+  CameraRoll
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -19,25 +22,24 @@ import { SCREENS } from '../../routers';
 import { fireNoti } from '../../api';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>,
+  navigation: NavigationScreenProp<{}>
 };
 type State = {
   itemName: string,
   price: string,
   link: string,
   image: ?{
-    uri: string,
-  },
+    uri: string
+  }
 };
-
 
 export default class Admin extends Component<Props, State> {
   state = {
     itemName: '',
     price: '',
     link: '',
-    image: null,
-  }
+    image: null
+  };
 
   onProcess = async () => {
     const {
@@ -53,7 +55,7 @@ export default class Admin extends Component<Props, State> {
         image,
         product: itemName,
         number: price,
-        link,
+        link
       });
       if (rs) {
         Notify.show('success', 'Chúc mừng', 'Gửi thành công');
@@ -65,12 +67,12 @@ export default class Admin extends Component<Props, State> {
       Loading.hide();
       Notify.show('error', 'Gửi không thành công', 'Có lỗi hệ thống');
     }
-  }
+  };
 
   onChangeValue = (infoName: string, value: string) => {
     this.setState(state => ({
       ...state,
-      [infoName]: value,
+      [infoName]: value
     }));
   };
 
@@ -91,37 +93,37 @@ export default class Admin extends Component<Props, State> {
       path: string,
       mime: string,
       filename: string
-    } = !camera ? await ImagePicker.openPicker({
-      multiple: false
-    }) : await ImagePicker.openCamera({
-      multiple: false
-    });
+    } = !camera
+      ? await ImagePicker.openPicker({
+        multiple: false
+      })
+      : await ImagePicker.openCamera({
+        multiple: false
+      });
     if (camera) {
+      /* $FlowFixMe */
       CameraRoll.saveToCameraRoll(image.path, 'photo');
     }
     this.setState({
       image: {
         uri: image.path,
         type: image.mime,
-        name: image.filename,
+        name: image.filename
       }
     });
-  }
+  };
 
   onBack = () => {
     const { navigation } = this.props;
     navigation.navigate({
       routeName: SCREENS.SHOPPING_CART,
-      key: SCREENS.SHOPPING_CART,
+      key: SCREENS.SHOPPING_CART
     });
-  }
+  };
 
   render() {
     const {
-      itemName,
-      price,
-      image,
-      link,
+      itemName, price, image, link
     } = this.state;
     return (
       <Container>
@@ -174,7 +176,10 @@ export default class Admin extends Component<Props, State> {
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                  <Image source={image || require('../../assets/images/default_image.jpg')} style={styles.image} />
+                  <Image
+                    source={image || require('../../assets/images/default_image.jpg')}
+                    style={styles.image}
+                  />
                 </View>
               </Content>
             </Transition>
@@ -192,19 +197,19 @@ const styles = StyleSheet.create({
     fontSize: measures.fontSizeMedium,
     color: colors.black,
     fontWeight: '500',
-    marginLeft: measures.marginSmall,
+    marginLeft: measures.marginSmall
   },
   image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    borderRadius: measures.borderRadius,
+    borderRadius: measures.borderRadius
   },
   imageContainer: {
     marginVertical: measures.marginSmall,
     width: measures.width - 4 * measures.marginMedium,
-    height: (measures.width - 4 * measures.marginMedium) * 2 / 3,
+    height: ((measures.width - 4 * measures.marginMedium) * 2) / 3,
     ...defaultStyles.shadow,
-    alignSelf: 'center',
+    alignSelf: 'center'
   }
 });

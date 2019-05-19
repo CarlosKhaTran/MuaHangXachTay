@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { StyleSheet, View, AsyncStorage } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationScreenProp, StackActions, NavigationActions } from 'react-navigation';
 import LottieView from 'lottie-react-native';
 import { Container } from '../Widgets';
@@ -8,15 +9,13 @@ import { measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>,
+  navigation: NavigationScreenProp<{}>
   // isReady: boolean,
 };
-type State = {
-};
+type State = {};
 
 export default class LoadingPage extends Component<Props, State> {
-  state = {
-  }
+  state = {};
 
   async componentDidMount() {
     const { navigation } = this.props;
@@ -25,15 +24,18 @@ export default class LoadingPage extends Component<Props, State> {
       if (notFirstTime) {
         const resetAction = StackActions.reset({
           index: 0,
-          actions: [NavigationActions.navigate({
-            routeName: SCREENS.SHOP_MENU, key: SCREENS.SHOP_MENU,
-          })],
+          actions: [
+            NavigationActions.navigate({
+              routeName: SCREENS.SHOP_MENU,
+              key: SCREENS.SHOP_MENU
+            })
+          ]
         });
         navigation.dispatch(resetAction);
       } else {
         navigation.navigate({
           routeName: SCREENS.INTRO,
-          key: SCREENS.INTRO,
+          key: SCREENS.INTRO
         });
       }
     }, 2000);
@@ -44,15 +46,13 @@ export default class LoadingPage extends Component<Props, State> {
     this.lottie.reset();
   }
 
-  onLoadDone = () => {
-
-  };
+  onLoadDone = () => {};
 
   navigate = (screenName: string) => {
     const { navigation } = this.props;
     navigation.navigate({
       routeName: screenName,
-      key: screenName,
+      key: screenName
     });
   };
 
@@ -80,20 +80,20 @@ export default class LoadingPage extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    backgroundColor: colors.loadingBackground,
+    backgroundColor: colors.loadingBackground
   },
   animatedView: {
     height: 100,
-    width: 100,
+    width: 100
   },
   image: {
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   welcome: {
     fontSize: measures.fontSizeLarge,
     marginBottom: 10 * measures.marginLong,
     fontWeight: '500',
-    alignSelf: 'center',
-  },
+    alignSelf: 'center'
+  }
 });

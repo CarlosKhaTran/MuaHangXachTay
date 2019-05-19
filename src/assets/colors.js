@@ -16,7 +16,7 @@ const colors: { [key: string]: string | Array<string> } = {
   sunglo: '#f2c4c4',
   mango: '#F9DD71',
   overlay: 'rgba(0,0,0,0.6)',
-  blue: '#1DBEF0',
+  blue: '#5333ed',
   tree: '#68c3a3',
   green: '#89E0B3',
   jaffa: '#f9690e',

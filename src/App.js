@@ -1,15 +1,14 @@
 // @flow
 
 import React, { Component } from 'react';
-import {
-  AppState, DeviceEventEmitter, Platform, AsyncStorage
-} from 'react-native';
+import { AppState, DeviceEventEmitter, Platform } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
 import { NavigationActions } from 'react-navigation';
 import type { Notification, NotificationOpen } from 'react-native-firebase';
-import { Notify, Loading } from './Components/Global';
-import Initial, { SCREENS } from './routers';
-import { subscribeToTopic } from './api';
+import { Notify, Loading } from 'Components/Global';
+import Initial, { SCREENS } from 'routers';
+import { subscribeToTopic } from 'api';
 
 type Props = {};
 type State = {};
@@ -64,7 +63,7 @@ export default class App extends Component<Props, State> {
               product,
               number,
               url,
-              link,
+              link
             }
           })
         );
@@ -96,7 +95,8 @@ export default class App extends Component<Props, State> {
           .android.setAutoCancel(true)
           .android.setPriority(firebase.notifications.Android.Priority.High);
 
-        firebase.notifications()
+        firebase
+          .notifications()
           .displayNotification(localNotification)
           .catch(err => console.error(err));
       }
@@ -112,11 +112,14 @@ export default class App extends Component<Props, State> {
             description: `Tên: ${product} - Giá ${number.toLocaleString()} VND`,
             seen: false,
             data: {
-              product, number, url, link
+              product,
+              number,
+              url,
+              link
             },
-            url,
+            url
           },
-          ...JSON.parse(oldNotification),
+          ...JSON.parse(oldNotification)
         ];
         AsyncStorage.setItem('notifications', JSON.stringify(newNotifications));
       });

@@ -11,28 +11,28 @@ export { default as SCREENS } from './screens';
 const stack = createFluidNavigator(
   {
     [SCREENS.LOADING]: {
-      screen: pages.Loading,
+      screen: pages.Loading
     },
     [SCREENS.INTRO]: {
-      screen: pages.Intro,
+      screen: pages.Intro
     },
     [SCREENS.SHOPPING_CART]: {
-      screen: pages.ShoppingCart,
+      screen: pages.ShoppingCart
     },
     [SCREENS.NOTIFICATION]: {
-      screen: pages.Notification,
+      screen: pages.Notification
     },
     [SCREENS.ADMIN_LOGIN]: {
-      screen: pages.AdminLogin,
+      screen: pages.AdminLogin
     },
     [SCREENS.ADMIN]: {
-      screen: pages.Admin,
+      screen: pages.Admin
     },
     [SCREENS.PRODUCT]: {
-      screen: pages.Product,
+      screen: pages.Product
     },
     [SCREENS.SHOP_MENU]: {
-      screen: pages.ShopMenu,
+      screen: pages.ShopMenu
     },
     [SCREENS.SUPPORT]: {
       screen: pages.Support
@@ -49,7 +49,7 @@ const stack = createFluidNavigator(
   },
   {
     headerMode: 'none',
-    navigationOptions: { gesturesEnabled: false },
+    navigationOptions: { gesturesEnabled: false }
   }
 );
 
@@ -60,11 +60,16 @@ const drawerConfig = {
   drawerToggleRoute: 'DrawerToggle',
   drawerLockMode: 'locked-closed',
   drawerWidth: measures.width * 0.8,
-  contentComponent: layouts.Drawer,
+  contentComponent: layouts.Drawer
 };
 
-export default createAppContainer(createDrawerNavigator({
-  MainScreen: {
-    screen: stack,
-  },
-}, drawerConfig));
+export default createAppContainer(
+  createDrawerNavigator(
+    {
+      MainScreen: {
+        screen: stack
+      }
+    },
+    drawerConfig
+  )
+);

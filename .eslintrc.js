@@ -1,10 +1,10 @@
 module.exports = {
-  'extends': 'airbnb',
-  'parser': 'babel-eslint',
-  'env': {
-    'jest': true,
+  extends: 'airbnb',
+  parser: 'babel-eslint',
+  env: {
+    jest: true
   },
-  'rules': {
+  rules: {
     'no-use-before-define': 'off',
     'react/jsx-filename-extension': 'off',
     'react/prefer-stateless-function': 'off',
@@ -12,13 +12,20 @@ module.exports = {
     'comma-dangle': 'off',
     'react/destructuring-assignment': 'off',
     'import/prefer-default-export': 'off',
-    "global-require": 0
+    'global-require': 0
   },
-  'globals': {
-    "fetch": false,
-    "require": false,
-    "React$Node": false,
-    "isNaN": false,
-    "FormData": false
+  globals: {
+    fetch: false,
+    require: false,
+    React$Node: false,
+    isNaN: false,
+    FormData: false
+  },
+  settings: {
+    'import/resolver': {
+      'babel-module': {
+        root: ['./src']
+      }
+    }
   }
-}
+};

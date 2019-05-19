@@ -30,6 +30,8 @@ target 'MuaHangXachTay' do
 
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
 end
 post_install do |installer|
   installer.pods_project.targets.each do |target|

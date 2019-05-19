@@ -1,92 +1,141 @@
 // @flow
 import React from 'react';
 import {
-  StyleSheet, View, Text, TouchableOpacity, ScrollView, Image
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Animated,
+  ImageBackground,
+  Easing
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { Container, Icon, Button } from '../Widgets';
-import { colors, measures, defaultStyles } from '../../assets';
-import SCREENS from '../../routers/screens';
+import { NavigationScreenProp } from 'react-navigation';
+import ActionButton from 'react-native-action-button';
+import { Container, Icon } from 'Components/Widgets';
+import { colors, measures, defaultStyles } from 'assets';
+import SCREENS from 'routers/screens';
 
-type Props = {};
+type Props = {
+  navigation: NavigationScreenProp<{}>
+};
+
+type State = {
+  rotateAnim: Animated.Value
+};
 
 const rows: Array<{
   title: string,
   iconType?: string,
   iconName: string,
-  screen: string,
+  screen: string
 }> = [
-    {
-      title: 'Trang chủ',
-      iconName: 'ios-home',
-      screen: SCREENS.ADMIN
-    },
-    {
-      title: 'Thông báo',
-      iconName: 'bell',
-      iconType: 'ent',
-      screen: SCREENS.NOTIFICATION
-    },
-    {
-      title: 'Điều khoản dịch vụ',
-      iconName: 'ios-help-buoy',
-      screen: SCREENS.SUPPORT
-    },
-    {
-      title: 'Cài đặt',
-      iconName: 'ios-settings',
-      screen: SCREENS.SETTING
-    },
-    {
-      title: 'Liên hệ',
-      iconName: 'ios-mail',
-      screen: SCREENS.CONTACT
-    }
-  ];
+  {
+    title: 'Trang chủ',
+    iconName: 'ios-home',
+    screen: SCREENS.ADMIN
+  },
+  {
+    title: 'Thông báo',
+    iconName: 'bell',
+    iconType: 'ent',
+    screen: SCREENS.NOTIFICATION
+  },
+  {
+    title: 'Hỗ trợ',
+    iconName: 'ios-help-buoy',
+    screen: SCREENS.SUPPORT
+  },
+  {
+    title: 'Cài đặt',
+    iconName: 'ios-settings',
+    screen: SCREENS.SETTING
+  },
+  {
+    title: 'Liên hệ',
+    iconName: 'ios-mail',
+    screen: SCREENS.CONTACT
+  }
+];
 
-export default class Drawer extends React.PureComponent<Props> {
+const rowColors: Array<string> = ['#52AACD', '#2B8BC5', '#2066B0', '#19579E', '#12448E', '#008153'];
+
+export default class Drawer extends React.PureComponent<Props, State> {
+  state = {
+    rotateAnim: new Animated.Value(0)
+  };
+
+  componentDidMount() {
+    this.startAnimation();
+  }
+
+  startAnimation = () => {
+    this.state.rotateAnim.setValue(0);
+    Animated.timing(this.state.rotateAnim, {
+      toValue: 1,
+      duration: 6000,
+      easing: Easing.linear
+    }).start(() => {
+      this.startAnimation();
+    });
+  };
 
   navigate = (screenName: string) => {
     const { navigation } = this.props;
-    if (screenName ==  SCREENS.NOTIFICATION) {
-      this.onOpenNotification()
+    if (screenName === SCREENS.NOTIFICATION) {
+      this.onOpenNotification();
     }
     navigation.navigate({
       routeName: screenName,
-      key: screenName,
+      key: screenName
     });
   };
 
   onOpenNotification = () => {
     const { navigation } = this.props;
-    const { notifications } = this.state;
     navigation.navigate({
       routeName: SCREENS.NOTIFICATION,
       key: SCREENS.NOTIFICATION,
       params: {
-        notifications
+        notifications: []
       }
     });
   };
 
+  getColor = (index: number) => rowColors[index];
+
   render() {
     return (
       <Container>
-        <LinearGradient
-          colors={colors.gradient}
+        <ImageBackground
+          imageStyle={styles.airport}
           style={styles.header}
-          end={{ x: 0, y: 0 }}
-          start={{ x: 1, y: 0 }}
+          resizeMode="stretch"
+          source={require('../../assets/images/header.png')}
         >
-          <Image source={require('../../assets/images/airport.png')} style={styles.airport} />
           <View style={styles.avartaContainer}>
-            <Image source={require('../../assets/images/ic_launcher.png')} style={styles.logo} />
+            <Animated.Image
+              source={require('../../assets/images/ic_launcher.png')}
+              style={[
+                styles.logo,
+                {
+                  transform: [
+                    {
+                      rotate: this.state.rotateAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '360deg']
+                      })
+                    }
+                  ]
+                }
+              ]}
+            />
           </View>
           <View style={styles.headerContent}>
             <Text style={styles.title}>HTH: MUA HÀNG XÁCH TAY</Text>
             <Text style={styles.intro}>Đăng nhập ngay!</Text>
           </View>
-        </LinearGradient>
+        </ImageBackground>
         <ScrollView>
           {rows.map((item, index) => (
             <TouchableOpacity
@@ -98,7 +147,7 @@ export default class Drawer extends React.PureComponent<Props> {
                 <Icon
                   name={item.iconName}
                   type={item.iconType}
-                  color={colors.gray}
+                  color={this.getColor(index)}
                   size={measures.iconSizeMedium}
                 />
               </View>
@@ -109,15 +158,25 @@ export default class Drawer extends React.PureComponent<Props> {
                 <Icon
                   name="caretright"
                   type="ant"
-                  color={colors.gray}
+                  color={this.getColor(index)}
                   size={measures.defaultUnit * 2}
                 />
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <Button type="secondary" title="Đăng nhập" />
-        <Button type="primary" title="Đăng ký" onPress={() => {this.navigate(SCREENS.REGISTER)}}/>
+        <ActionButton buttonColor={colors.primaryColor}>
+          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập">
+            <Icon name="md-log-in" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item
+            buttonColor={colors.green}
+            title="Liên hệ trực tiếp"
+            onPress={() => {}}
+          >
+            <Icon name="md-call" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
       </Container>
     );
   }
@@ -125,18 +184,19 @@ export default class Drawer extends React.PureComponent<Props> {
 
 const styles = StyleSheet.create({
   header: {
-    height: measures.defaultUnit * 15,
     width: '100%',
     flexDirection: 'row',
-    paddingHorizontal: measures.paddingMedium,
-    paddingVertical: measures.paddingLong
+    paddingVertical: measures.paddingLong,
+    backgroundColor: colors.gray
   },
   avarta: {
+    marginLeft: measures.marginMedium,
     marginTop: measures.marginMedium
   },
   avartaContainer: {
     height: measures.defaultUnit * 9,
     width: measures.defaultUnit * 9,
+    marginLeft: measures.marginMedium,
     borderRadius: measures.defaultUnit * 4.5,
     justifyContent: 'flex-end',
     alignSelf: 'center',
@@ -184,18 +244,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingRight: measures.paddingSmall
   },
-  airport: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    height: '100%',
-    opacity: 0.4,
-    width: 150,
-    resizeMode: 'contain'
-  },
   logo: {
     width: '100%',
     height: '100%',
-    resizeMode: 'stretch',
+    resizeMode: 'stretch'
   },
+  airport: {
+    opacity: 0.6
+  }
 });

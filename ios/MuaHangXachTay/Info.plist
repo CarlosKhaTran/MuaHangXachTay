@@ -102,6 +102,10 @@
 		<string>RobotoCondensed-Light.ttf</string>
 		<string>RobotoCondensed-LightItalic.ttf</string>
 		<string>RobotoCondensed-Regular.ttf</string>
+		<string>Quicksand-Bold.ttf</string>
+		<string>Quicksand-Light.ttf</string>
+		<string>Quicksand-Medium.ttf</string>
+		<string>Quicksand-Regular.ttf</string>
 	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save to Camera Roll</string>

@@ -1,9 +1,10 @@
 // @flow
 import React, { Component } from 'react';
 import {
-  View, FlatList, Text, StyleSheet, TouchableOpacity, AsyncStorage
+  View, FlatList, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
+import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Icon

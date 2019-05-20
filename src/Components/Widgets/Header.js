@@ -11,6 +11,7 @@ import {
   Image,
   Platform
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { SafeAreaView } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
@@ -24,7 +25,6 @@ type Props = {
   title?: ?string,
   leftIcon?: ?React$Node,
   rightIcon?: ?React$Node,
-  containSearchBar: boolean,
   onfocusSearch: ?Function,
   onBlurSearch: ?Function,
   onChangeSearchText: Function,
@@ -113,7 +113,6 @@ export default class Header extends Component<Props, State> {
   render() {
     const {
       handleLeftButton,
-      containSearchBar,
       title,
       leftIcon,
       handleRightButton,
@@ -133,8 +132,8 @@ export default class Header extends Component<Props, State> {
       <View
         style={[
           styles.container,
-          containSearchBar && {
-            height: measures.defaultUnit * 17
+          DeviceInfo.hasNotch() && {
+            height: measures.defaultUnit * 18,
           }
         ]}
       >

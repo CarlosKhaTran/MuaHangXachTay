@@ -15,7 +15,7 @@
     "react": "16.6.3",
     "react-native": "0.59.8",
     "react-native-action-button": "^2.8.5",
-    "react-native-device-info": "^0.26.4",
+    "react-native-device-info": "^2.0.0",
     "react-native-dropdownalert": "^3.9.2",
     "react-native-elements": "^1.1.0",
     "react-native-firebase": "^5.2.3",

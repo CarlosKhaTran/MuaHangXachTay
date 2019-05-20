@@ -32,7 +32,7 @@ const step = [
   }
 ];
 
-const rowColors: Array<string> = ['#97E8FF', '#5BC8FF', '#47ABFF', '#489BF2', '#296ACC', '#008153'];
+const rowColors: Array<string> = ['#ffa600', '#ff6361', '#bc5090', '#58508d', '#003f5c', '#008153'];
 
 export default class Support extends Component<Props, State> {
   onBack = () => {
@@ -64,14 +64,18 @@ export default class Support extends Component<Props, State> {
             <ScrollView>
               {step.map((item, idx) => (
                 <View
+                  style={[styles.rowBound, { borderColor: rowColors[idx] }]}
                   key={idx.toString()}
-                  style={[styles.row, { backgroundColor: rowColors[idx] }]}
                 >
-                  <View style={styles.stepContainer}>
-                    <Text style={[styles.number, { color: rowColors[idx] }]}>{idx + 1}</Text>
-                  </View>
-                  <View style={defaultStyles.fill}>
-                    <Text style={styles.rowContent}>{item.title}</Text>
+                  <View
+                    style={[styles.row, { backgroundColor: rowColors[idx] }]}
+                  >
+                    <View style={styles.stepContainer}>
+                      <Text style={[styles.number, { color: rowColors[idx] }]}>{idx + 1}</Text>
+                    </View>
+                    <View style={defaultStyles.fill}>
+                      <Text style={styles.rowContent}>{item.title}</Text>
+                    </View>
                   </View>
                 </View>
               ))}
@@ -113,9 +117,11 @@ const styles = StyleSheet.create({
   },
   row: {
     height: measures.defaultUnit * 8,
-    borderRadius: measures.defaultUnit * 4,
+    borderTopRightRadius: measures.defaultUnit * 4,
+    borderBottomRightRadius: measures.defaultUnit * 4,
     marginVertical: measures.marginSmall,
-    marginHorizontal: measures.marginMedium,
+    marginRight: measures.marginMedium,
+    marginLeft: measures.defaultUnit * 4,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: measures.defaultUnit
@@ -125,6 +131,7 @@ const styles = StyleSheet.create({
     width: measures.defaultUnit * 6,
     backgroundColor: colors.white,
     borderRadius: measures.defaultUnit * 3,
+    marginLeft: -measures.defaultUnit * 4,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -137,6 +144,6 @@ const styles = StyleSheet.create({
     marginLeft: measures.marginMedium,
     ...defaultStyles.text,
     color: colors.white,
-    alignSelf: 'center'
-  }
+  },
+  rowBound: { borderLeftWidth: 1, marginLeft: measures.marginMedium }
 });

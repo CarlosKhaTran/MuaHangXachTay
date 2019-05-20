@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Easing
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { NavigationScreenProp } from 'react-navigation';
 import ActionButton from 'react-native-action-button';
 import { Container, Icon } from 'Components/Widgets';
@@ -109,7 +110,7 @@ export default class Drawer extends React.PureComponent<Props, State> {
       <Container>
         <ImageBackground
           imageStyle={styles.airport}
-          style={styles.header}
+          style={[styles.header, DeviceInfo.hasNotch() && { height: measures.defaultUnit * 18 }]}
           resizeMode="stretch"
           source={require('../../assets/images/header.png')}
         >

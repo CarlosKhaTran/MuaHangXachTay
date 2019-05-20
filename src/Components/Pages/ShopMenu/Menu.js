@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     marginHorizontal: measures.marginMedium,
     marginVertical: measures.marginSmall,
-    borderWidth: 1,
-    borderColor: colors.sunglo,
+    borderWidth: 0.5,
+    borderColor: colors.primaryColor,
     flexDirection: 'row'
   },
   image: {

@@ -4943,9 +4943,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-device-info@^0.26.4:
-  version "0.26.4"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.26.4.tgz#5d747fae91d5abceff2de5430ff92749a09c62dd"
+react-native-device-info@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-2.0.0.tgz#7b36f33187f2ca471f8978b102cf023ff3f47e8f"
+  integrity sha512-U7etnOYOU0UPFtH4/RraMjGz9o2FP8ak7IotoiSlWERt1TVcqYMiNVKYaFzaMHjyinxxsCS2fyznl2WTPoK77Q==
 
 react-native-dropdownalert@^3.9.2:
   version "3.9.2"

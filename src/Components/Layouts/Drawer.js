@@ -48,7 +48,7 @@ const rows: Array<{
     screen: SCREENS.SUPPORT
   },
   {
-    title: 'Cài đặt',
+    title: 'Điều khoản sử dụng',
     iconName: 'ios-settings',
     screen: SCREENS.SETTING
   },
@@ -167,8 +167,11 @@ export default class Drawer extends React.PureComponent<Props, State> {
           ))}
         </ScrollView>
         <ActionButton buttonColor={colors.primaryColor}>
-          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập">
+          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập" onPress={() => this.navigate(SCREENS.REGISTER)}>
             <Icon name="md-log-in" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor={colors.white} title="Đăng ký" onPress={() => this.navigate(SCREENS.REGISTER)}>
+            <Icon name="md-person-add" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item
             buttonColor={colors.green}

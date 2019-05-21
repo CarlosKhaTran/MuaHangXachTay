@@ -38,8 +38,8 @@ export default class Register extends Component<Props, State> {
   onGoToSupport = () => {
     const { navigation } = this.props;
     navigation.navigate({
-      routeName: SCREENS.SUPPORT,
-      key: SCREENS.SUPPORT
+      routeName: SCREENS.SETTING,
+      key: SCREENS.SETTING
     });
   };
 

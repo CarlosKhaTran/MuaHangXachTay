@@ -60,7 +60,7 @@ export default class Notification extends Component<Props, State> {
 
   onBack = () => {
     const { navigation } = this.props;
-    navigation.goBack();
+    navigation.navigate(SCREENS.SHOP_MENU)
   };
 
   getColor = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {

@@ -116,8 +116,8 @@ export default class Admin extends Component<Props, State> {
   onBack = () => {
     const { navigation } = this.props;
     navigation.navigate({
-      routeName: SCREENS.SHOPPING_CART,
-      key: SCREENS.SHOPPING_CART
+      routeName: SCREENS.SHOP_MENU,
+      key: SCREENS.SHOP_MENU
     });
   };
 

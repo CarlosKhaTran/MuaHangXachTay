@@ -118,3 +118,28 @@ export async function getAllNoti(): Promise<any> {
     return [];
   }
 }
+
+export  async function registerUser(
+  username,
+  password
+) {
+  try {
+    console.log(username , password, "AAAAAA")
+    const url = urls.registerUser();
+    console.log(url,"URL")
+    
+    const data = new FormData()
+    data.append('username', username)
+    data.append('password', password)
+    
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response)
+    return response;
+  } catch (error) {
+    throw (error);
+  }
+};

@@ -10,6 +10,7 @@ import {
 } from '../Widgets';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
+import { registerUser } from '../../api';
 
 type Props = {
   navigation: NavigationScreenProp<{}>
@@ -108,7 +109,10 @@ export default class Register extends Component<Props, State> {
             </TouchableOpacity>
           </KeyboardAwareScrollView>
         </Content>
-        <Button title="ĐĂNG KÝ" type="primary" block />
+        <Button title="ĐĂNG KÝ" type="primary" block onPress={() => {
+                console.log(username , password, "OK")
+                registerUser(username,password)
+              }}/>
       </Container>
     );
   }

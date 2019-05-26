@@ -16,7 +16,8 @@ import {
 import { Notify } from '../Global';
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
-
+import { loginUser } from '../../api';
+import { from } from 'rxjs/internal/observable/from';
 type Props = {
   navigation: NavigationScreenProp<{}>,
 }
@@ -39,18 +40,25 @@ export default class AdminLogIn extends Component<Props, State> {
     navigation.goBack();
   }
 
-  onLogin = () => {
+  onLogin = async () => {
     const { username, password } = this.state;
     const { navigation } = this.props;
-    if (username !== USERNAME || password !== PASSWORD) {
-      Notify.show('error', 'Error', 'Đăng nhập thất bại. Vui lòng thử lại!');
-      return;
+    const rs = loginUser(username, password)
+    if (rs) {
+      this.navigate(SCREENS.SHOP_MENU);
+    } else {
+      Notify.show('error', 'Vui lòng thử lại', 'Lỗi đăng ký');
     }
-    navigation.navigate({
-      routeName: SCREENS.ADMIN,
-      key: SCREENS.ADMIN,
-    });
   }
+
+  navigate = (screenName: string) => {
+    const { navigation } = this.props;
+    navigation.navigate({
+      routeName: screenName,
+      key: screenName
+    });
+  };
+
 
   onChangeValue = (value: string, name: 'username' | 'password') => {
     this.setState({

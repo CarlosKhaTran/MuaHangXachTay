@@ -1,8 +1,9 @@
 // @flow
 
 export type Product = {
+  id: string,
   name: string,
-  image: any,
+  image_url: any,
   description: string,
   price: number,
   star: number

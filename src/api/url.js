@@ -9,4 +9,6 @@ export const getAllNoti = () => `${HOST}/notification?limit=99999999`;
 
 export const registerUser = () => `${HOST_1}/user/register`;
 export const loginUser = () => `${HOST_1}/user/login`;
+export const getAllProduct = () => `${HOST_1}/product`;
+
 

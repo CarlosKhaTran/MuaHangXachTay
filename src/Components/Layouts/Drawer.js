@@ -167,7 +167,7 @@ export default class Drawer extends React.PureComponent<Props, State> {
           ))}
         </ScrollView>
         <ActionButton buttonColor={colors.primaryColor}>
-          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập" onPress={() => this.navigate(SCREENS.REGISTER)}>
+          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập" onPress={() => this.navigate(SCREENS.ADMIN_LOGIN)}>
             <Icon name="md-log-in" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor={colors.white} title="Đăng ký" onPress={() => this.navigate(SCREENS.REGISTER)}>

@@ -124,10 +124,7 @@ export  async function registerUser(
   password
 ) {
   try {
-    console.log(username , password, "AAAAAA")
     const url = urls.registerUser();
-    console.log(url,"URL")
-    
     const data = new FormData()
     data.append('username', username)
     data.append('password', password)
@@ -137,9 +134,47 @@ export  async function registerUser(
         'Content-Type': 'application/json',
       },
     });
+    return response;
+  } catch (error) {
+    throw (error);
+  }
+};
+
+export  async function loginUser(
+  username,
+  password
+) {
+  try {
+    console.log(username, password , "OK")
+    const url = urls.loginUser;
+    const data = new FormData()
+    data.append('username', username)
+    data.append('password', password)
+    
+    console.log(data, "DATA")
+    
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log("Ok2")
     console.log(response)
     return response;
   } catch (error) {
     throw (error);
   }
 };
+
+export async function getAllProduct(): Promise<any> {
+  try {
+    const url = urls.getAllProduct();
+    const response = await axios.get(url);
+    const { data } = response.data;
+    console.log(data, "PRODUCT DATA")
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}

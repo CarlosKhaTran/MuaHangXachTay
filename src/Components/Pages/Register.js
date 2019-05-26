@@ -11,6 +11,7 @@ import {
 import { defaultStyles, measures, colors } from '../../assets';
 import { SCREENS } from '../../routers';
 import { registerUser } from '../../api';
+import { Notify } from '../Global';
 
 type Props = {
   navigation: NavigationScreenProp<{}>
@@ -49,6 +50,25 @@ export default class Register extends Component<Props, State> {
       [name]: value
     });
   };
+
+  onRegister = async (username: string, password: string) => {
+    const rs = registerUser(username, password)
+    if (rs) {
+      this.navigate(SCREENS.ADMIN_LOGIN);
+    } else {
+      Notify.show('error', 'Vui lòng thử lại', 'Lỗi đăng ký');
+    }
+  }
+
+  navigate = (screenName: string) => {
+    const { navigation } = this.props;
+    navigation.navigate({
+      routeName: screenName,
+      key: screenName
+    });
+  };
+
+
 
   dropdown: { alertWithType: Function };
 
@@ -111,7 +131,7 @@ export default class Register extends Component<Props, State> {
         </Content>
         <Button title="ĐĂNG KÝ" type="primary" block onPress={() => {
                 console.log(username , password, "OK")
-                registerUser(username,password)
+                this.onRegister(username,password)
               }}/>
       </Container>
     );

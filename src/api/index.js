@@ -146,3 +146,16 @@ export async function registerUser(username: string, password: string) {
     throw error;
   }
 }
+
+export async function getAllProduct(): Promise<any> {
+  try {
+    const url = urls.getAllProduct();
+    const response = await axios.get(url);
+    const { data } = response.data;
+    console.log(data, 'PRODUCT DATA');
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}

@@ -6,16 +6,35 @@ import {
 import type { Product } from 'utils/fakeData';
 import { menuData } from 'utils/fakeData';
 import { measures, defaultStyles, colors } from 'assets';
-
+import { getAllProduct } from '../../../api';
 type Props = {};
-type State = {};
 
-const data: Array<Product> = menuData;
+type State = {
+  productData: Array<Product>,
+};
+
 
 export default class Menu extends React.Component<Props, State> {
+
+  state = {
+    productData: null
+  };
+
+  componentWillMount() {
+    this.getData()
+    console.log("Ok")
+  }
+
+  getData =  async () => {
+    const productData: Array<Product> = await getAllProduct();
+    this.setState(
+      productData
+    );
+  }
+
   renderItem = ({ item }: { item: Product }) => (
     <View style={styles.rowContainer}>
-      <Image source={item.image} style={styles.image} />
+      <Image source={item.image_url} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.description} numberOfLines={2}>
@@ -32,6 +51,9 @@ export default class Menu extends React.Component<Props, State> {
   );
 
   render() {
+    const {
+      data
+    } = this.state;
     return (
       <View style={styles.container}>
         <FlatList

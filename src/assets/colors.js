@@ -5,7 +5,7 @@ const colors: { [key: string]: string | Array<string> } = {
   secondaryLinearGradient: ['#ffffff', '#F2F2F2'],
   white: 'white',
   primaryColor: '#2574a9',
-  lightPrimaryColor: '#b3e5fc',
+  lightPrimaryColor: '#52b3d9',
   borderColor: '#BFBFBF',
   softRed: '#EC644B',
   lightGray: '#F2F2F2',
@@ -34,7 +34,8 @@ const colors: { [key: string]: string | Array<string> } = {
   greensea: '#16a085',
   loadingBackground: '#b3e5fc',
   seperator: '#F1F1F1',
-  gradient: ['#b3e5fc', '#2574a9'],
-  lemon: '#f7ca18'
+  gradient: ['#52b3d9', '#2574a9'],
+  lemon: '#f7ca18',
+  orange: '#f39c12'
 };
 export default colors;

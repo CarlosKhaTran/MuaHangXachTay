@@ -10,3 +10,4 @@ export { default as Support } from './Support';
 export { default as Contact } from './Contact';
 export { default as Setting } from './Setting';
 export { default as Register } from './Register';
+export { default as LogIn } from './LogIn';

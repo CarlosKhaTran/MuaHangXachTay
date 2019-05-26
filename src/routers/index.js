@@ -45,6 +45,9 @@ const stack = createFluidNavigator(
     },
     [SCREENS.REGISTER]: {
       screen: pages.Register
+    },
+    [SCREENS.LOG_IN]: {
+      screen: pages.LogIn
     }
   },
   {

@@ -19,7 +19,7 @@ type State = {
   email: string,
   password: string
 };
-export default class Register extends React.Component<Props, State> {
+export default class Login extends React.Component<Props, State> {
   state = {
     email: '',
     password: ''
@@ -48,6 +48,8 @@ export default class Register extends React.Component<Props, State> {
           <View style={styles.formContainer}>
             <Input
               name="email"
+              prependIconName="ios-mail"
+              prependIconColor={colors.primaryColor}
               placeholderText="Địa chỉ Email"
               block
               autoCapitalize="none"
@@ -58,6 +60,8 @@ export default class Register extends React.Component<Props, State> {
             <Input
               name="password"
               placeholderText="Mật khẩu"
+              prependIconName="ios-key"
+              prependIconColor={colors.primaryColor}
               block
               passwordInput
               value={password}
@@ -67,10 +71,17 @@ export default class Register extends React.Component<Props, State> {
               <Text style={styles.forgetPassword}>Quên mật khẩu?</Text>
             </TouchableOpacity>
           </View>
-          <Button block title="ĐĂNG KÝ" type="primary" />
+          <View style={styles.buttonContainer}>
+            <View style={defaultStyles.fill}>
+              <Button block title="ĐĂNG KÝ" type="secondary" />
+            </View>
+            <View style={defaultStyles.fill}>
+              <Button block title="ĐĂNG NHẬP" type="primary" />
+            </View>
+          </View>
         </KeyboardAwareScrollView>
         <TouchableOpacity style={styles.backButton} onPress={this.onBack}>
-          <Icon name="ios-arrow-back" size={30} color="white" />
+          <Icon name="ios-arrow-back" size={30} color={colors.primaryColor} />
         </TouchableOpacity>
       </Container>
     );
@@ -128,8 +139,11 @@ const styles = StyleSheet.create({
     height: measures.defaultUnit * 4.5,
     width: measures.defaultUnit * 4.5,
     borderRadius: measures.defaultUnit * 2.25,
-    backgroundColor: colors.primaryColor,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  buttonContainer: {
+    flexDirection: 'row',
   }
 });

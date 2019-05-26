@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import {
-  TextInput, StyleSheet, TouchableOpacity, Text, Animated
+  TextInput, StyleSheet, TouchableOpacity, Text, Animated, View
 } from 'react-native';
 import type { Style } from '../../utils/typeDefinition';
 import Icon from './Icon';
@@ -18,11 +18,14 @@ type Props = {
   top?: ?number,
   bottom?: ?number,
   block?: ?boolean,
+  prependIconName?: string,
+  prependIconColor?: string,
+  prependIconType?: string,
   passwordInput?: boolean,
   placeholderText?: string,
   appendText?: string,
   appendIcon?: string,
-  value?: string,
+  value?: string
 };
 
 type State = {
@@ -36,7 +39,7 @@ type State = {
 export default class Input extends Component<Props, State> {
   static defaultProps = {
     top: 0,
-    onChangeValue: () => { },
+    onChangeValue: () => {},
     bottom: measures.marginLong,
     block: false,
     value: '',
@@ -48,19 +51,24 @@ export default class Input extends Component<Props, State> {
     appendText: '',
     placeholderText: '',
     appendIcon: '',
+    prependIconName: '',
+    prependIconType: undefined,
+    prependIconColor: colors.blue
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): any {
     if (
+      !prevState.onActive
+      && nextProps.value !== ''
       // eslint-disable-next-line no-underscore-dangle
-      !prevState.onActive && nextProps.value !== '' && prevState.transitionAnimValue._value !== 1
+      && prevState.transitionAnimValue._value !== 1
     ) {
       return {
-        injectValue: true,
+        injectValue: true
       };
     }
     return {
-      injectValue: false,
+      injectValue: false
     };
   }
 
@@ -69,7 +77,7 @@ export default class Input extends Component<Props, State> {
     transitionAnimValue: new Animated.Value(0),
     onActive: false,
     injectValue: false,
-    _value: 0,
+    _value: 0
   };
 
   componentDidUpdate() {
@@ -79,35 +87,40 @@ export default class Input extends Component<Props, State> {
   }
 
   onFocus = () => {
+    const { _value } = this.state;
+    if (_value === 1) return;
     Animated.timing(this.state.transitionAnimValue, {
       toValue: 1,
-      duration: 100,
+      duration: 100
     }).start(() => {
       if (_.isEmpty(this.props.value)) {
         this.setState({
           onActive: true,
-          _value: 1,
+          _value: 1
         });
       }
       this.setState({
-        _value: 1,
+        _value: 1
       });
     });
   };
 
   onBlur = () => {
     const { value } = this.props;
-    this.setState({
-      onActive: false,
-      _value: _.isEmpty(value) ? 0 : 1,
-    }, () => {
-      if (_.isEmpty(value)) {
-        Animated.timing(this.state.transitionAnimValue, {
-          toValue: 0,
-          duration: 100,
-        }).start();
+    this.setState(
+      {
+        onActive: false,
+        _value: _.isEmpty(value) ? 0 : 1
+      },
+      () => {
+        if (_.isEmpty(value)) {
+          Animated.timing(this.state.transitionAnimValue, {
+            toValue: 0,
+            duration: 100
+          }).start();
+        }
       }
-    });
+    );
   };
 
   containerStyle = (): Style => {
@@ -120,16 +133,15 @@ export default class Input extends Component<Props, State> {
       marginHorizontal: measures.marginSmall,
       width: !block ? measures.buttonWidth : null,
       alignSelf: !block ? 'center' : null,
-      backgroundColor: error ? colors.sunglo : colors.white,
+      backgroundColor: error ? colors.sunglo : colors.white
     };
-  }
+  };
 
   toggleEyeButton = () => {
     this.setState(prevState => ({
-      showPassword: !prevState.showPassword,
+      showPassword: !prevState.showPassword
     }));
   };
-
 
   render() {
     const {
@@ -142,17 +154,20 @@ export default class Input extends Component<Props, State> {
       appendText,
       value,
       appendIcon,
+      prependIconName,
+      prependIconType,
+      prependIconColor
     } = this.props;
     const {
       showPassword, transitionAnimValue, onActive, _value
     } = this.state;
     const translateY = transitionAnimValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, -24],
+      outputRange: [0, -24]
     });
     const fontSize = transitionAnimValue.interpolate({
       inputRange: [0, 1],
-      outputRange: [measures.fontSizeMedium, measures.fontSizeSmall],
+      outputRange: [measures.fontSizeMedium, measures.fontSizeSmall]
     });
     return (
       <Animated.View
@@ -160,7 +175,7 @@ export default class Input extends Component<Props, State> {
           styles.container,
           this.containerStyle,
           containerStyle,
-          { borderColor: !onActive ? colors.lightGray : colors.softRed, },
+          { borderColor: !onActive ? colors.gray : colors.softRed }
         ]}
       >
         <Animated.Text
@@ -168,20 +183,30 @@ export default class Input extends Component<Props, State> {
             ...defaultStyles.text,
             paddingHorizontal: measures.paddingSmall,
             position: 'absolute',
-            left: measures.defaultUnit,
+            left: measures.defaultUnit * 3.5,
             alignSelf: 'center',
             backgroundColor: _value === 0 ? colors.transparent : colors.white,
             transform: [
               {
-                translateY,
-              },
+                translateY
+              }
             ],
             fontSize,
-            color: !onActive ? colors.gray : colors.softRed,
+            color: !onActive ? colors.gray : colors.softRed
           }}
         >
           {placeholderText}
         </Animated.Text>
+        {prependIconName !== '' && (
+          <View style={styles.prependContainer}>
+            <Icon
+              name={prependIconName}
+              type={prependIconType}
+              size="small"
+              color={prependIconColor}
+            />
+          </View>
+        )}
         <TextInput
           {...this.props}
           onFocus={this.onFocus}
@@ -200,7 +225,7 @@ export default class Input extends Component<Props, State> {
               ...defaultStyles.text,
               color: colors.gray,
               alignSelf: 'center',
-              right: measures.marginSmall,
+              right: measures.marginSmall
             }}
           >
             {appendText}
@@ -226,14 +251,14 @@ const styles = StyleSheet.create({
     height: measures.defaultUnit * 6,
     flexDirection: 'row',
     borderRadius: measures.borderRadius,
-    borderWidth: 1,
-    backgroundColor: colors.white,
+    borderWidth: 0.5,
+    backgroundColor: colors.white
   },
   input: {
     ...defaultStyles.text,
     flex: 1,
     color: colors.black,
-    paddingLeft: measures.paddingMedium,
+    paddingLeft: measures.paddingMedium
   },
   errorText: {
     ...defaultStyles.text,
@@ -242,11 +267,16 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: -measures.fontSizeSmall,
     fontSize: measures.fontSizeSmall,
-    textAlign: 'right',
+    textAlign: 'right'
   },
   eyeButton: {
     width: measures.defaultUnit * 6,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
+  prependContainer: {
+    width: measures.defaultUnit * 4,
+    justifyContent: 'center',
+    paddingLeft: measures.paddingSmall
+  }
 });

@@ -1,8 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import {
-  StyleSheet, View, ImageBackground, Text
-} from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Container, Header, Icon } from '../Widgets';
@@ -45,15 +43,15 @@ export default class Support extends Component<Props, State> {
 
   render() {
     return (
-      <Container style={{ backgroundColor: colors.white }}>
+      <Container>
         <Header
           title="HỖ TRỢ"
           rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
           handleLeftButton={this.onBack}
         />
-        <ImageBackground
+        <View
           style={defaultStyles.fill}
-          source={require('assets/images/instruction.jpg')}
+          // source={require('assets/images/instruction.jpg')}
           imageStyle={styles.image}
         >
           <View style={styles.background}>
@@ -63,13 +61,8 @@ export default class Support extends Component<Props, State> {
             </View>
             <ScrollView>
               {step.map((item, idx) => (
-                <View
-                  style={[styles.rowBound, { borderColor: rowColors[idx] }]}
-                  key={idx.toString()}
-                >
-                  <View
-                    style={[styles.row, { backgroundColor: rowColors[idx] }]}
-                  >
+                <View key={idx.toString()} style={defaultStyles.shadow}>
+                  <View style={[styles.row, { backgroundColor: rowColors[idx] }]}>
                     <View style={styles.stepContainer}>
                       <Text style={[styles.number, { color: rowColors[idx] }]}>{idx + 1}</Text>
                     </View>
@@ -81,7 +74,7 @@ export default class Support extends Component<Props, State> {
               ))}
             </ScrollView>
           </View>
-        </ImageBackground>
+        </View>
       </Container>
     );
   }
@@ -104,14 +97,14 @@ const styles = StyleSheet.create({
   title: {
     ...defaultStyles.text,
     fontWeight: '500',
-    color: colors.white,
+    color: colors.black,
     fontSize: measures.fontSizeMedium,
     marginBottom: measures.marginSmall
   },
   bigTitle: {
     ...defaultStyles.text,
     fontWeight: '400',
-    color: colors.white,
+    color: colors.gray,
     marginBottom: measures.marginSmall,
     fontSize: measures.large
   },
@@ -143,7 +136,7 @@ const styles = StyleSheet.create({
   rowContent: {
     marginLeft: measures.marginMedium,
     ...defaultStyles.text,
-    color: colors.white,
+    color: colors.white
   },
   rowBound: { borderLeftWidth: 1, marginLeft: measures.marginMedium }
 });

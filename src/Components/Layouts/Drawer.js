@@ -3,12 +3,15 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  Linking,
   Text,
   TouchableOpacity,
   ScrollView,
   Animated,
   ImageBackground,
-  Easing
+  Easing,
+  Alert,
+  Platform
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationScreenProp } from 'react-navigation';
@@ -17,6 +20,7 @@ import { Container, Icon } from 'Components/Widgets';
 import { colors, measures, defaultStyles } from 'assets';
 import SCREENS from 'routers/screens';
 
+const PHONE_NUMBER = '0793964277';
 type Props = {
   navigation: NavigationScreenProp<{}>
 };
@@ -105,6 +109,24 @@ export default class Drawer extends React.PureComponent<Props, State> {
 
   getColor = (index: number) => rowColors[index];
 
+  onPressCall = () => {
+    let phoneNumber;
+    if (Platform.OS !== 'android') {
+      phoneNumber = `tel://${PHONE_NUMBER}`;
+    } else {
+      phoneNumber = `tel:${PHONE_NUMBER}`;
+    }
+    Linking.canOpenURL(phoneNumber)
+      .then((supported) => {
+        if (!supported) {
+          Alert.alert('Phone number is not available');
+        } else {
+          Linking.openURL(phoneNumber);
+        }
+      })
+      .catch(err => console.log(err));
+  };
+
   render() {
     return (
       <Container>
@@ -166,19 +188,24 @@ export default class Drawer extends React.PureComponent<Props, State> {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <ActionButton buttonColor={colors.primaryColor}>
-          <ActionButton.Item buttonColor={colors.white} title="Đăng nhập" onPress={() => this.navigate(SCREENS.REGISTER)}>
-            <Icon name="md-log-in" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor={colors.white} title="Đăng ký" onPress={() => this.navigate(SCREENS.REGISTER)}>
-            <Icon name="md-person-add" style={styles.actionButtonIcon} />
+        <ActionButton shadowStyle={styles.shadowStyle} buttonColor={colors.lightPrimaryColor}>
+          <ActionButton.Item
+            buttonColor={colors.softRed}
+            hideLabelShadow
+            shadowStyle={styles.shadowStyle}
+            title="Đăng nhập"
+            onPress={() => this.navigate(SCREENS.LOG_IN)}
+          >
+            <Icon name="md-log-in" style={styles.actionButtonIcon} color={colors.white} />
           </ActionButton.Item>
           <ActionButton.Item
+            shadowStyle={styles.shadowStyle}
+            hideLabelShadow
             buttonColor={colors.green}
             title="Liên hệ trực tiếp"
             onPress={() => {}}
           >
-            <Icon name="md-call" style={styles.actionButtonIcon} />
+            <Icon name="md-call" style={styles.actionButtonIcon} color={colors.white} />
           </ActionButton.Item>
         </ActionButton>
       </Container>
@@ -187,6 +214,9 @@ export default class Drawer extends React.PureComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
+  shadowStyle: {
+    shadowOpacity: 0.15
+  },
   header: {
     width: '100%',
     flexDirection: 'row',

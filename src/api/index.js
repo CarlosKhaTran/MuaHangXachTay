@@ -14,7 +14,7 @@ export const sendEmail = async ({
   date,
   cost,
   phone,
-  note,
+  note
 }: {
   image: Object,
   name: string,
@@ -24,7 +24,7 @@ export const sendEmail = async ({
   date: string,
   cost: string,
   phone: string,
-  note: string,
+  note: string
 }) => {
   try {
     const url = urls.sendEmailUrl();
@@ -33,28 +33,31 @@ export const sendEmail = async ({
       data.append('image', {
         uri: image.uri,
         type: image.type,
-        name: image.uri,
+        name: image.uri
       });
     }
     data.append('receiver', 'testmuahangxachtay@gmail.com');
-    data.append('content', JSON.stringify({
-      name,
-      address,
-      product,
-      number,
-      date,
-      cost,
-      phone,
-      note,
-    }));
+    data.append(
+      'content',
+      JSON.stringify({
+        name,
+        address,
+        product,
+        number,
+        date,
+        cost,
+        phone,
+        note
+      })
+    );
     const response = await axios.post(url, data, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
     return response;
   } catch (error) {
-    throw (error);
+    throw error;
   }
 };
 
@@ -62,12 +65,12 @@ export const fireNoti = async ({
   image,
   product,
   number,
-  link,
+  link
 }: {
   image: ?Object,
   product: string,
   number: string,
-  link: string,
+  link: string
 }) => {
   try {
     const url = urls.fireNoti();
@@ -76,22 +79,25 @@ export const fireNoti = async ({
       data.append('image', {
         uri: image.uri,
         type: image.type,
-        name: image.uri,
+        name: image.uri
       });
     }
-    data.append('content', JSON.stringify({
-      product,
-      number,
-      link,
-    }));
+    data.append(
+      'content',
+      JSON.stringify({
+        product,
+        number,
+        link
+      })
+    );
     const response = await axios.post(url, data, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
     return response;
   } catch (error) {
-    throw (error);
+    throw error;
   }
 };
 
@@ -99,7 +105,7 @@ export async function subscribeToTopic(token: string) {
   try {
     const url = urls.subscribeToTopic();
     const response = await axios.post(url, {
-      token,
+      token
     });
     console.log(response);
   } catch (error) {
@@ -119,27 +125,24 @@ export async function getAllNoti(): Promise<any> {
   }
 }
 
-export  async function registerUser(
-  username,
-  password
-) {
+export async function registerUser(username: string, password: string) {
   try {
-    console.log(username , password, "AAAAAA")
+    // console.log(username, password, 'AAAAAA');
     const url = urls.registerUser();
-    console.log(url,"URL")
-    
-    const data = new FormData()
-    data.append('username', username)
-    data.append('password', password)
-    
+    // console.log(url, 'URL');
+
+    const data = new FormData();
+    data.append('username', username);
+    data.append('password', password);
+
     const response = await axios.post(url, data, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
-    console.log(response)
+    // console.log(response)
     return response;
   } catch (error) {
-    throw (error);
+    throw error;
   }
-};
+}

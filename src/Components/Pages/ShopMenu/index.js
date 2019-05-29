@@ -25,6 +25,8 @@ export default class ShopMenu extends Component<Props, State> {
     routes: [{ key: 'first', title: 'MENU' }, { key: 'second', title: 'YÊU CẦU' }]
   };
 
+  Menu = <Menu />;
+
   onOpenNotification = () => {
     const { navigation } = this.props;
     navigation.navigate({
@@ -81,8 +83,12 @@ export default class ShopMenu extends Component<Props, State> {
     />
   );
 
+  renderTabView = () => SceneMap({
+    first: () => this.Menu,
+    second: () => <ShoppingCart navigation={this.props.navigation} />
+  });
+
   render() {
-    const { navigation } = this.props;
     const { index, routes } = this.state;
     return (
       <Container>
@@ -99,11 +105,9 @@ export default class ShopMenu extends Component<Props, State> {
             index,
             routes
           }}
+          lazy
           /* $FlowFixMe */
-          renderScene={SceneMap({
-            first: () => <Menu />,
-            second: () => <ShoppingCart navigation={navigation} />
-          })}
+          renderScene={this.renderTabView()}
           renderTabBar={this.renderTabBar}
           onIndexChange={idx => this.setState({ index: idx })}
           initialLayout={{ width: measures.width }}

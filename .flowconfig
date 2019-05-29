@@ -67,6 +67,7 @@ module.name_mapper='^api\(.*\)$' -> '<PROJECT_ROOT>/src/api/\1'
 module.name_mapper='^assets\(.*\)$' -> '<PROJECT_ROOT>/src/assets\1'
 module.name_mapper='^routers\(.*\)$' -> '<PROJECT_ROOT>/src/routers/\1'
 module.name_mapper='^utils\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
+module.name_mapper='^state\(.*\)$' -> '<PROJECT_ROOT>/src/state/\1'
 
 munge_underscores=true
 

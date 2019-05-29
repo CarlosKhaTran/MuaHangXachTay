@@ -38,7 +38,7 @@ const rows: Array<{
   {
     title: 'Trang chủ',
     iconName: 'ios-home',
-    screen: SCREENS.ADMIN
+    screen: SCREENS.SHOP_MENU
   },
   {
     title: 'Thông báo',
@@ -87,8 +87,13 @@ export default class Drawer extends React.PureComponent<Props, State> {
 
   navigate = (screenName: string) => {
     const { navigation } = this.props;
+    if (screenName === SCREENS.SHOP_MENU) {
+      navigation.closeDrawer();
+      return;
+    }
     if (screenName === SCREENS.NOTIFICATION) {
       this.onOpenNotification();
+      return;
     }
     navigation.navigate({
       routeName: screenName,

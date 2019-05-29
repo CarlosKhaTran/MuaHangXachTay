@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   StyleSheet,
-  BackHandler,
+  BackHandler
 } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import SCREENS from '../../routers/screens';
@@ -16,11 +16,11 @@ import { Icon } from '../Widgets';
 
 type Props = {
   navigation: Object,
-  data?: Array<{ image: any, intro: string, infoDetail: string }>,
+  data?: Array<{ image: any, intro: string, infoDetail: string }>
 };
 
 type State = {
-  isCompleted: boolean,
+  isCompleted: boolean
 };
 
 export default class Intro extends Component<Props, State> {
@@ -29,26 +29,23 @@ export default class Intro extends Component<Props, State> {
       {
         image: require('../../assets/images/fastService.png'),
         intro: 'Dịch vụ nhanh chóng',
-        infoDetail:
-          'Mua hàng một cách nhanh chóng và thuận tiện nhất',
+        infoDetail: 'Mua hàng một cách nhanh chóng và thuận tiện nhất'
       },
       {
         image: require('../../assets/images/deal.png'),
         intro: 'Uy tín hàng đầu',
-        infoDetail:
-          'Sự tin cậy luôn được chúng tôi đặt lên hàng đầu',
+        infoDetail: 'Sự tin cậy luôn được chúng tôi đặt lên hàng đầu'
       },
       {
         image: require('../../assets/images/giftbox.png'),
         intro: 'Tiện ích bất ngờ',
-        infoDetail:
-          'Chúng tôi sẽ mang đến cho bạn những tiện ích khuyến mãi bất ngờ và đầy hấp dẫn',
-      },
-    ],
+        infoDetail: 'Chúng tôi sẽ mang đến cho bạn những tiện ích khuyến mãi bất ngờ và đầy hấp dẫn'
+      }
+    ]
   };
 
   state: State = {
-    isCompleted: false,
+    isCompleted: false
   };
 
   componentDidMount() {
@@ -59,7 +56,7 @@ export default class Intro extends Component<Props, State> {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
   }
 
-  handleBackPress = () => false
+  handleBackPress = () => false;
 
   onMove = (move: Function, position: number): void => {
     const { data } = this.props;
@@ -68,7 +65,7 @@ export default class Intro extends Component<Props, State> {
       return;
     }
     this.setState({
-      isCompleted: position + 1 === data.length - 1,
+      isCompleted: position + 1 === data.length - 1
     });
     move(position + 1);
   };
@@ -77,9 +74,12 @@ export default class Intro extends Component<Props, State> {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({
-        routeName: SCREENS.SHOPPING_CART, key: SCREENS.SHOPPING_CART
-      })],
+      actions: [
+        NavigationActions.navigate({
+          routeName: SCREENS.SHOP_MENU,
+          key: SCREENS.SHOP_MENU
+        })
+      ]
     });
     navigation.dispatch(resetAction);
   };
@@ -146,11 +146,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: colors.loadingBackground,
+    backgroundColor: colors.loadingBackground
   },
   slider: {
     flex: 1,
-    marginTop: measures.height / 5,
+    marginTop: measures.height / 5
   },
   buttons: {
     marginTop: 0,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginHorizontal: measures.marginLong,
     height: measures.defaultUnit * 7,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   button: {
     width: measures.defaultUnit,
@@ -166,36 +166,36 @@ const styles = StyleSheet.create({
     borderRadius: measures.borderRadius,
     marginHorizontal: 4,
     backgroundColor: '#909090',
-    opacity: 0.9,
+    opacity: 0.9
   },
   buttonSelected: {
     opacity: 1,
-    backgroundColor: colors.gray,
+    backgroundColor: colors.gray
   },
   customSlider: {
-    backgroundColor: colors.loadingBackground,
+    backgroundColor: colors.loadingBackground
   },
   imageContainer: {
-    marginHorizontal: measures.defaultUnit * 8,
+    marginHorizontal: measures.defaultUnit * 8
   },
   customImage: {
     width: '100%',
     resizeMode: 'contain',
     height: 300,
     backgroundColor: colors.lightGray,
-    borderRadius: measures.borderRadius,
+    borderRadius: measures.borderRadius
   },
   textContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 32
   },
   introText: {
     marginTop: 23,
     fontSize: 22,
     color: colors.black,
     fontWeight: '600',
-    ...defaultStyles.text,
+    ...defaultStyles.text
   },
   introDetailText: {
     marginTop: 7.5,
@@ -204,31 +204,31 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: colors.black,
     textAlign: 'center',
-    flex: 1,
+    flex: 1
   },
   skipText: {
     fontSize: measures.fontSizeMedium - 1,
     color: '#000000',
-    opacity: 0.7,
+    opacity: 0.7
   },
   groupDots: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   skipContainer: {
-    flex: 1,
+    flex: 1
   },
   nextContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   skipButton: {
     flex: 1,
     justifyContent: 'center',
-    width: 50,
-  },
+    width: 50
+  }
 });

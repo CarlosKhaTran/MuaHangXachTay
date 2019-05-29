@@ -1,40 +1,38 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   View, StyleSheet, FlatList, Text, Image
 } from 'react-native';
-import type { Product } from 'utils/fakeData';
-import { menuData } from 'utils/fakeData';
+import type { Product } from 'utils/typeDefinition';
 import { measures, defaultStyles, colors } from 'assets';
-import { getAllProduct } from '../../../api';
+import { getAllProduct } from 'api';
+
 type Props = {};
 
 type State = {
-  productData: Array<Product>,
+  productData: Array<Product>
 };
 
-
-export default class Menu extends React.Component<Props, State> {
-
+export class Menu extends React.Component<Props, State> {
   state = {
-    productData: null
+    productData: []
   };
 
-  componentWillMount() {
-    this.getData()
-    console.log("Ok")
+  componentDidMount() {
+    this.getData();
   }
 
-  getData =  async () => {
-    const productData: Array<Product> = await getAllProduct();
-    this.setState(
-      productData
-    );
-  }
+  getData = async () => {
+    const res: { products: Array<Product> } = await getAllProduct();
+    this.setState({
+      productData: res.products
+    });
+  };
 
   renderItem = ({ item }: { item: Product }) => (
     <View style={styles.rowContainer}>
-      <Image source={item.image_url} style={styles.image} />
+      <Image source={{ uri: item.image_url }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.description} numberOfLines={2}>
@@ -51,13 +49,11 @@ export default class Menu extends React.Component<Props, State> {
   );
 
   render() {
-    const {
-      data
-    } = this.state;
+    const { productData } = this.state;
     return (
       <View style={styles.container}>
         <FlatList
-          data={data}
+          data={productData}
           renderItem={this.renderItem}
           keyExtractor={(item: Product, index: number) => index.toString()}
         />
@@ -65,6 +61,15 @@ export default class Menu extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  const { productList } = state.productState;
+  return {
+    productList
+  };
+};
+
+export default connect(mapStateToProps)(Menu);
 
 const styles = StyleSheet.create({
   container: {

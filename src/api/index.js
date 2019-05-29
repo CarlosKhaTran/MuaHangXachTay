@@ -152,10 +152,8 @@ export async function getAllProduct(): Promise<any> {
     const url = urls.getAllProduct();
     const response = await axios.get(url);
     const { data } = response.data;
-    console.log(data, 'PRODUCT DATA');
     return data;
   } catch (error) {
-    console.log(error);
     return [];
   }
 }

@@ -1,25 +1,29 @@
 // @flow
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationScreenProp, StackActions, NavigationActions } from 'react-navigation';
 import LottieView from 'lottie-react-native';
-import { Container } from '../Widgets';
-import { measures, colors } from '../../assets';
-import { SCREENS } from '../../routers';
+import { Container } from 'Components/Widgets';
+import { measures, colors } from 'assets';
+import { SCREENS } from 'routers';
+import { actions } from 'state';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<{}>,
+  initApp: () => void
   // isReady: boolean,
 };
 type State = {};
 
-export default class LoadingPage extends Component<Props, State> {
+export class LoadingPage extends Component<Props, State> {
   state = {};
 
   async componentDidMount() {
-    const { navigation } = this.props;
+    const { navigation, initApp } = this.props;
     const notFirstTime = await AsyncStorage.getItem('notFirstTime');
+    initApp();
     setTimeout(() => {
       if (notFirstTime) {
         const resetAction = StackActions.reset({
@@ -76,6 +80,15 @@ export default class LoadingPage extends Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  initApp: () => dispatch(actions.initApp())
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(LoadingPage);
 
 const styles = StyleSheet.create({
   container: {

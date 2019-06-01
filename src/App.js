@@ -4,14 +4,14 @@ import React, { Component } from 'react';
 import { AppState, DeviceEventEmitter } from 'react-native';
 // import AsyncStorage from '@react-native-community/async-storage';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/es/integration/react';
+import { PersistGate } from 'redux-persist/integration/react';
 // import firebase from 'react-native-firebase';
 // import { NavigationActions } from 'react-navigation';
 // import type { Notification, NotificationOpen } from 'react-native-firebase';
-import { Notify, Loading } from 'Components/Global';
-import Initial from 'routers';
-// import { subscribeToTopic } from 'api';
+import { Notify, Loading, Alert } from 'Components/Global';
 import state from 'state';
+import Initial from './Initial';
+// import { subscribeToTopic } from 'api';
 
 type Props = {};
 type State = {};
@@ -158,6 +158,7 @@ export default class App extends Component<Props, State> {
           />
           <Notify.Component key="notify" />
           <Loading.Component key="Loading" />
+          <Alert.Component />
         </PersistGate>
       </Provider>
     );

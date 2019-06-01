@@ -1,11 +1,16 @@
-// import actions from './actions';
+import actions from './actions';
 
 const initState = {
-  ProductList: []
+  productList: []
 };
 
 export default (state = initState, action) => {
   switch (action.type) {
+    case actions.RECEIVE_PRODUCT_LIST:
+      return {
+        ...state,
+        productList: action.payload
+      };
     default:
       return {
         ...state

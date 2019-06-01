@@ -1,34 +1,30 @@
 // @flow
+
+import type { Product } from 'utils/typeDefinition';
 import React from 'react';
 import { connect } from 'react-redux';
 import {
   View, StyleSheet, FlatList, Text, Image
 } from 'react-native';
-import type { Product } from 'utils/typeDefinition';
 import { measures, defaultStyles, colors } from 'assets';
-import { getAllProduct } from 'api';
+import { actions } from 'state';
 
-type Props = {};
+type Props = {
+  getProductList: () => void,
+  productList: Array<Product>,
+};
 
 type State = {
-  productData: Array<Product>
 };
 
 export class Menu extends React.Component<Props, State> {
   state = {
-    productData: []
   };
 
   componentDidMount() {
-    this.getData();
+    const { getProductList } = this.props;
+    getProductList();
   }
-
-  getData = async () => {
-    const res: { products: Array<Product> } = await getAllProduct();
-    this.setState({
-      productData: res.products
-    });
-  };
 
   renderItem = ({ item }: { item: Product }) => (
     <View style={styles.rowContainer}>
@@ -49,11 +45,11 @@ export class Menu extends React.Component<Props, State> {
   );
 
   render() {
-    const { productData } = this.state;
+    const { productList } = this.props;
     return (
       <View style={styles.container}>
         <FlatList
-          data={productData}
+          data={productList}
           renderItem={this.renderItem}
           keyExtractor={(item: Product, index: number) => index.toString()}
         />
@@ -69,7 +65,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Menu);
+const mapDispatchToProps = dispatch => ({
+  getProductList: () => dispatch(actions.getProductList()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 const styles = StyleSheet.create({
   container: {

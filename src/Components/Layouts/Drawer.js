@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   View,
@@ -7,10 +8,8 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Animated,
+  Image,
   ImageBackground,
-  Easing,
-  Alert,
   Platform
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -19,15 +18,20 @@ import ActionButton from 'react-native-action-button';
 import { Container, Icon } from 'Components/Widgets';
 import { colors, measures, defaultStyles } from 'assets';
 import SCREENS from 'routers/screens';
+import { checkLogin } from 'utils/common';
+import { actions } from 'state';
+import { Notify, Alert } from 'Components/Global';
 
 const PHONE_NUMBER = '0793964277';
 type Props = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<{}>,
+  isLogIn: boolean,
+  fullname: string,
+  username: string,
+  logOut: (cb: (isSuccess: boolean) => void) => void
 };
 
-type State = {
-  rotateAnim: Animated.Value
-};
+type State = {};
 
 const rows: Array<{
   title: string,
@@ -63,28 +67,9 @@ const rows: Array<{
   }
 ];
 
-const rowColors: Array<string> = ['#52AACD', '#2B8BC5', '#2066B0', '#19579E', '#12448E', '#008153'];
+const rowColors: Array<string> = ['#fcd670', '#f9bf3b', '#f5ab35', '#f39c12', '#e67e22', '#f27935'];
 
-export default class Drawer extends React.PureComponent<Props, State> {
-  state = {
-    rotateAnim: new Animated.Value(0)
-  };
-
-  componentDidMount() {
-    this.startAnimation();
-  }
-
-  startAnimation = () => {
-    this.state.rotateAnim.setValue(0);
-    Animated.timing(this.state.rotateAnim, {
-      toValue: 1,
-      duration: 6000,
-      easing: Easing.linear
-    }).start(() => {
-      this.startAnimation();
-    });
-  };
-
+export class Drawer extends React.PureComponent<Props, State> {
   navigate = (screenName: string) => {
     const { navigation } = this.props;
     if (screenName === SCREENS.SHOP_MENU) {
@@ -132,36 +117,37 @@ export default class Drawer extends React.PureComponent<Props, State> {
       .catch(err => console.log(err));
   };
 
+  callBack = (isSuccess: boolean) => {
+    const { navigation } = this.props;
+    if (isSuccess) {
+      Notify.show('info', 'Tạm biệt', 'Bạn đã đăng xuất khỏi cửa hàng!');
+      navigation.closeDrawer();
+      return;
+    }
+    Alert.show('Opps!', 'Có vấn đề xảy ra. không thể đăng xuất');
+  }
+
+  signOut = () => {
+    const { logOut } = this.props;
+    logOut(this.callBack);
+  }
+
   render() {
+    const { isLogIn, fullname, username } = this.props;
     return (
       <Container>
         <ImageBackground
           imageStyle={styles.airport}
           style={[styles.header, DeviceInfo.hasNotch() && { height: measures.defaultUnit * 18 }]}
           resizeMode="stretch"
-          source={require('../../assets/images/header.png')}
+          source={require('assets/images/header.png')}
         >
           <View style={styles.avartaContainer}>
-            <Animated.Image
-              source={require('../../assets/images/ic_launcher.png')}
-              style={[
-                styles.logo,
-                {
-                  transform: [
-                    {
-                      rotate: this.state.rotateAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '360deg']
-                      })
-                    }
-                  ]
-                }
-              ]}
-            />
+            <Image source={require('assets/images/ic_launcher.png')} style={[styles.logo]} />
           </View>
           <View style={styles.headerContent}>
             <Text style={styles.title}>HTH: MUA HÀNG XÁCH TAY</Text>
-            <Text style={styles.intro}>Đăng nhập ngay!</Text>
+            <Text style={styles.intro}>{isLogIn ? `Xin chào: ${(fullname || username)}` : 'Đăng nhập ngay!'}</Text>
           </View>
         </ImageBackground>
         <ScrollView>
@@ -193,20 +179,20 @@ export default class Drawer extends React.PureComponent<Props, State> {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <ActionButton shadowStyle={styles.shadowStyle} buttonColor={colors.lightPrimaryColor}>
+        <ActionButton shadowStyle={styles.shadowStyle} buttonColor={colors.primaryColor}>
           <ActionButton.Item
-            buttonColor={colors.softRed}
+            buttonColor={isLogIn ? colors.white : colors.blue}
             hideLabelShadow
             shadowStyle={styles.shadowStyle}
-            title="Đăng nhập"
-            onPress={() => this.navigate(SCREENS.LOG_IN)}
+            title={isLogIn ? 'Đăng xuất' : 'Đăng nhập'}
+            onPress={isLogIn ? this.signOut : () => this.navigate(SCREENS.LOG_IN)}
           >
-            <Icon name="md-log-in" style={styles.actionButtonIcon} color={colors.white} />
+            <Icon name="md-log-in" style={styles.actionButtonIcon} color={isLogIn ? colors.primaryColor : colors.white} />
           </ActionButton.Item>
           <ActionButton.Item
             shadowStyle={styles.shadowStyle}
             hideLabelShadow
-            buttonColor={colors.green}
+            buttonColor={colors.tree}
             title="Liên hệ trực tiếp"
             onPress={() => {}}
           >
@@ -218,9 +204,27 @@ export default class Drawer extends React.PureComponent<Props, State> {
   }
 }
 
+const mapStateToProps = ({ userState }) => {
+  const {
+    token, createdAt, username, fullname
+  } = userState;
+  const isLogIn = checkLogin(token, createdAt);
+  return {
+    isLogIn,
+    username,
+    fullname
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  logOut: (cb: (isSuccess: boolean) => void) => dispatch(actions.logOut(cb)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Drawer);
+
 const styles = StyleSheet.create({
   shadowStyle: {
-    shadowOpacity: 0.15
+    shadowOpacity: 0
   },
   header: {
     width: '100%',

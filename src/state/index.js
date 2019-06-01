@@ -1,20 +1,22 @@
 // @flow
-import { persistStore, persistCombineReducers } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 import createSagaMiddleware from 'redux-saga';
-import { createStore, applyMiddleware, compose } from 'redux';
+import {
+  createStore, applyMiddleware, compose, combineReducers
+} from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import reducer from './reducer';
 import createSaga from './saga';
-import * as commonActions from './common/actions';
-import * as productActions from './product/actions';
+import commonActions from './common/actions';
+import productActions from './product/actions';
+import userActions from './user/actions';
 
 const config = {
   key: 'root',
   storage: AsyncStorage,
-  blacklist: []
+  stateReconciler: hardSet
 };
-
-const createReducers = () => persistCombineReducers(config, reducer);
 
 const createMiddlewares = (sagaMiddleware) => {
   const middlewares = [];
@@ -28,14 +30,10 @@ const createMiddlewares = (sagaMiddleware) => {
 
 const buildStore = () => {
   const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(
-    createReducers(),
-    undefined,
-    compose(createMiddlewares(sagaMiddleware))
-  );
+  const persistedReducer = persistReducer(config, combineReducers(reducer));
+  const store = createStore(persistedReducer, compose(createMiddlewares(sagaMiddleware)));
 
   const persistor = persistStore(store);
-  store.reducers = createReducers();
   sagaMiddleware.run(createSaga());
   return { persistor, store };
 };
@@ -43,5 +41,6 @@ const buildStore = () => {
 export default buildStore();
 export const actions = {
   ...commonActions,
-  ...productActions
+  ...productActions,
+  ...userActions
 };

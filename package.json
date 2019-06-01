@@ -15,6 +15,7 @@
     "react": "16.8.6",
     "react-native": "0.59.8",
     "react-native-action-button": "^2.8.5",
+    "react-native-awesome-alerts": "^1.2.0",
     "react-native-collapsible": "^1.4.0",
     "react-native-device-info": "^2.0.0",
     "react-native-dropdownalert": "^3.9.2",
@@ -35,8 +36,9 @@
     "react-navigation-fluid-transitions": "^0.3.1",
     "react-redux": "^7.0.3",
     "redux": "^4.0.1",
-    "redux-persist": "5.10.0",
+    "redux-persist": "^6.0.0-pre1",
     "redux-saga": "^1.0.2",
+    "validation.js": "^1.0.3",
     "yarn": "^1.15.2"
   },
   "devDependencies": {

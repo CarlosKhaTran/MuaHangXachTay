@@ -2,10 +2,10 @@
 const colors: { [key: string]: string | Array<string> } = {
   defaultBackgroundColor: '#e8ecf1',
   contentBackground: '#ffffff',
-  secondaryLinearGradient: ['#ffffff', '#F2F2F2'],
+  secondaryLinearGradient: ['#ffffff', '#ffffff'],
   white: 'white',
-  primaryColor: '#2574a9',
-  lightPrimaryColor: '#52b3d9',
+  primaryColor: '#d35400',
+  lightPrimaryColor: '#f2784b',
   borderColor: '#BFBFBF',
   softRed: '#EC644B',
   lightGray: '#F2F2F2',
@@ -16,7 +16,7 @@ const colors: { [key: string]: string | Array<string> } = {
   sunglo: '#f2c4c4',
   mango: '#F9DD71',
   overlay: 'rgba(0,0,0,0.6)',
-  blue: '#5333ed',
+  blue: '#00b5cc',
   tree: '#68c3a3',
   green: '#89E0B3',
   jaffa: '#f9690e',
@@ -34,7 +34,7 @@ const colors: { [key: string]: string | Array<string> } = {
   greensea: '#16a085',
   loadingBackground: '#b3e5fc',
   seperator: '#F1F1F1',
-  gradient: ['#52b3d9', '#2574a9'],
+  gradient: ['#f2784b', '#d35400'],
   lemon: '#f7ca18',
   orange: '#f39c12'
 };

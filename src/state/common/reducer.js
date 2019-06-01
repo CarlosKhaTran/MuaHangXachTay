@@ -1,3 +1,12 @@
+// @flow
+
 const initState = {};
 
-export default (state = initState) => ({ ...state });
+export default (state: Object = initState, action: Object) => {
+  switch (action.type) {
+    default:
+      return {
+        ...state
+      };
+  }
+};

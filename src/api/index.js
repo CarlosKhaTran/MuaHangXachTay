@@ -127,21 +127,39 @@ export async function getAllNoti(): Promise<any> {
 
 export async function registerUser(username: string, password: string) {
   try {
-    // console.log(username, password, 'AAAAAA');
     const url = urls.registerUser();
-    // console.log(url, 'URL');
-
-    const data = new FormData();
-    data.append('username', username);
-    data.append('password', password);
-
-    const response = await axios.post(url, data, {
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await axios.post(url, {
+      user: {
+        username,
+        password
       }
     });
-    // console.log(response)
-    return response;
+    return response.data.user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function logOut() {
+  try {
+    const url = urls.logOut();
+    const response = await axios.post(url);
+    return response.data.user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function login(username: string, password: string) {
+  try {
+    const url = urls.login();
+    const response = await axios.post(url, {
+      user: {
+        username,
+        password
+      }
+    });
+    return response.data.user;
   } catch (error) {
     throw error;
   }
@@ -152,8 +170,8 @@ export async function getAllProduct(): Promise<any> {
     const url = urls.getAllProduct();
     const response = await axios.get(url);
     const { data } = response.data;
-    return data;
+    return data.products;
   } catch (error) {
-    return [];
+    throw error;
   }
 }

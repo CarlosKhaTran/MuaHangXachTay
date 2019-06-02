@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Container, Header, Icon } from '../Widgets';
+import {
+  Container, Header, Icon, ExtraHeader, Content
+} from '../Widgets';
 import { defaultStyles, colors, measures } from '../../assets';
 import { SCREENS } from '../../routers';
 
@@ -49,12 +51,9 @@ export default class Support extends Component<Props, State> {
           rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
           handleLeftButton={this.onBack}
         />
-        <View
-          style={defaultStyles.fill}
-          // source={require('assets/images/instruction.jpg')}
-          imageStyle={styles.image}
-        >
-          <View style={styles.background}>
+        <View style={defaultStyles.fill}>
+          <ExtraHeader />
+          <Content fill>
             <View style={styles.header}>
               <Text style={styles.title}>HƯỚNG DẪN</Text>
               <Text style={styles.bigTitle}>QUY TRÌNH ĐẶT HÀNG</Text>
@@ -73,7 +72,7 @@ export default class Support extends Component<Props, State> {
                 </View>
               ))}
             </ScrollView>
-          </View>
+          </Content>
         </View>
       </Container>
     );
@@ -87,12 +86,6 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: measures.paddingMedium,
     paddingTop: measures.paddingMedium
-  },
-  image: {
-    height: '100%',
-    width: '100%',
-    resizeMode: 'cover',
-    opacity: 0.7
   },
   title: {
     ...defaultStyles.text,
@@ -122,7 +115,7 @@ const styles = StyleSheet.create({
   stepContainer: {
     height: measures.defaultUnit * 6,
     width: measures.defaultUnit * 6,
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGray,
     borderRadius: measures.defaultUnit * 3,
     marginLeft: -measures.defaultUnit * 4,
     justifyContent: 'center',

@@ -97,6 +97,7 @@ export const fireNoti = async ({
     });
     return response;
   } catch (error) {
+    console.log('sss', error);
     throw error;
   }
 };
@@ -107,9 +108,9 @@ export async function subscribeToTopic(token: string) {
     const response = await axios.post(url, {
       token
     });
-    console.log(response);
+    return response.data;
   } catch (error) {
-    console.log(error);
+    return undefined;
   }
 }
 
@@ -120,7 +121,6 @@ export async function getAllNoti(): Promise<any> {
     const { data } = response.data;
     return data;
   } catch (error) {
-    console.log(error);
     return [];
   }
 }
@@ -145,6 +145,38 @@ export async function logOut() {
     const url = urls.logOut();
     const response = await axios.post(url);
     return response.data.user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUserProfile() {
+  try {
+    const url = urls.getUserProfile();
+    const response = await axios.get(url);
+    return response.data.user_profile;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateUserProfile(
+  fullname: string,
+  address: string,
+  email: string,
+  phoneNumber: string
+) {
+  try {
+    const url = urls.updateUserProfile();
+    const res = await axios.put(url, {
+      user_profile: {
+        fullname,
+        address,
+        email,
+        phone_number: phoneNumber
+      }
+    });
+    return res.data.user_profile;
   } catch (error) {
     throw error;
   }

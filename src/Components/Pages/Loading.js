@@ -73,7 +73,7 @@ export class LoadingPage extends Component<Props, State> {
             source={require('../../assets/images/shoppingCart.json')}
             loop
             autoPlay
-            style={{}}
+            style={{ transform: [{ scale: 0.8 }] }}
           />
         </View>
       </Container>

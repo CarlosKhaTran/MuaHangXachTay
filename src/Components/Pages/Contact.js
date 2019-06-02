@@ -1,19 +1,23 @@
 // @flow
 import React, { Component } from 'react';
 import {
-  View, Text, StyleSheet, Image, Linking, Platform, Alert
+  View, Text, StyleSheet, Linking, Platform
 } from 'react-native';
+import LottieView from 'lottie-react-native';
 import { NavigationScreenProp } from 'react-navigation';
+import email from 'react-native-email';
 import {
-  Container, Header, Button, Icon
-} from '../Widgets';
-import { defaultStyles, measures, colors } from '../../assets';
-import { SCREENS } from '../../routers';
+  Container, Header, Button, Content
+} from 'Components/Widgets';
+import { defaultStyles, measures, colors } from 'assets';
+import { SCREENS } from 'routers';
 
 type Props = {
   navigation: NavigationScreenProp<{}>
 };
 type State = {};
+
+const PHONE = '+84792964277';
 
 export default class Contact extends Component<Props, State> {
   onBack = () => {
@@ -24,93 +28,92 @@ export default class Contact extends Component<Props, State> {
     });
   };
 
-  pressCall = (phone: string) => {
-    let phoneNumber = phone;
+  pressCall = () => {
+    let phoneNumber;
     if (Platform.OS !== 'android') {
-      phoneNumber = `tel://${phone}`;
+      phoneNumber = `tel://${PHONE}`;
     } else {
-      phoneNumber = `tel:${phone}`;
+      phoneNumber = `tel:${PHONE}`;
     }
-    Linking.canOpenURL(phoneNumber)
-      .then((supported) => {
-        if (!supported) {
-          Alert.alert('Phone number is not available');
-        } else {
-          Linking.openURL(phoneNumber);
-        }
-      })
-      .catch(err => console.log(err));
+    Linking.openURL(phoneNumber);
   };
+
+  onPressEmail = () => {
+    const to = ['muahangxachtay@gmail.com'];
+    email(to, {
+      cc: [],
+      subject: 'Liên hệ mua hàng'
+    });
+  };
+
+  lottie: any;
 
   render() {
     return (
       <Container>
-        <Header
-          title="LIÊN HỆ"
-          rightIcon={<Icon name="bell" type="ent" color={colors.mango} />}
-          handleLeftButton={this.onBack}
-        />
-        <View style={defaultStyles.center}>
-          <Image source={require('../../assets/images/ic_launcher.png')} style={styles.logo} />
-          <Text style={styles.title}>HTH: MUA HÀNG XÁCH TAY</Text>
-          <View style={styles.buttonView}>
-            <Button
-              style={styles.button}
-              title="Điện thoại"
-              onPress={() => {
-                this.pressCall('+84363466087');
-              }}
-            />
-            <Button style={styles.button} title="Webiste" />
+        <Header title="LIÊN HỆ" handleLeftButton={this.onBack} />
+        <Content fill style={styles.content}>
+          <Text style={styles.appName}>HTH: MUA HÀNG XÁCH TAY</Text>
+          <Text style={styles.info}>☎ Số điện thoại: 0793964277</Text>
+          <Text style={styles.info}>✉ Email: muahangxachtay@gmail.com</Text>
+          <LottieView
+            ref={(lottie) => {
+              this.lottie = lottie;
+            }}
+            source={require('assets/images/travel.json')}
+            loop
+            autoPlay
+            style={{ transform: [{ scale: 0.8 }] }}
+          />
+          <View style={styles.buttonContainer}>
+            <View style={defaultStyles.fill}>
+              <Button
+                iconName="ios-mail"
+                block
+                title="EMAIL"
+                type="secondary"
+                onPress={this.onPressEmail}
+              />
+            </View>
+            <View style={defaultStyles.fill}>
+              <Button
+                block
+                iconName="ios-call"
+                title="CALL"
+                type="primary"
+                onPress={this.pressCall}
+              />
+            </View>
           </View>
-        </View>
+        </Content>
       </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  buttonView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5
+  content: {
+    borderRadius: measures.borderRadius,
+    marginTop: -measures.marginLong,
+    zIndex: 99999
   },
-  button: {
-    width: 100,
-    height: 50
+  buttonContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    flexDirection: 'row'
   },
-  logo: {
-    width: 200,
-    height: 200,
-    marginTop: 20
-  },
-  title: {
+  appName: {
     ...defaultStyles.text,
-    fontSize: measures.fontSizeLarge - 1,
-    fontWeight: 'bold',
-    marginTop: 10
+    fontSize: measures.fontSizeLarge,
+    color: colors.sharl,
+    fontWeight: '500',
+    margin: measures.marginMedium
   },
-  row: {
-    paddingHorizontal: measures.paddingSmall,
-    borderTopWidth: 1,
-    borderColor: colors.seperator,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: measures.paddingSmall
-  },
-  left: {
-    width: measures.defaultUnit * 6,
-    justifyContent: 'center',
-    paddingLeft: measures.paddingSmall
-  },
-  rowTitle: {
+  info: {
     ...defaultStyles.text,
-    fontSize: measures.fontSizeMedium + 1,
-    fontWeight: '100'
-  },
-  right: {
-    width: measures.defaultUnit * 6,
-    justifyContent: 'center',
-    paddingRight: measures.paddingSmall
+    fontSize: measures.fontSizeMedium,
+    fontWeight: '400',
+    color: colors.gray,
+    marginLeft: measures.marginMedium
   }
 });

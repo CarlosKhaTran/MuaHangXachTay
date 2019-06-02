@@ -11,3 +11,5 @@ export const registerUser = () => `${HOST_1}/user/register`;
 export const loginUser = () => `${HOST_1}/user/login`;
 export const getAllProduct = () => `${HOST_1}/product`;
 export const logOut = () => `${HOST_1}/user/logout`;
+export const getUserProfile = () => `${HOST_1}/user/profile`;
+export const updateUserProfile = () => `${HOST_1}/user/profile`;

@@ -11,6 +11,7 @@ import createSaga from './saga';
 import commonActions from './common/actions';
 import productActions from './product/actions';
 import userActions from './user/actions';
+import notiActions from './noti/actions';
 
 const config = {
   key: 'root',
@@ -42,5 +43,6 @@ export default buildStore();
 export const actions = {
   ...commonActions,
   ...productActions,
-  ...userActions
+  ...userActions,
+  ...notiActions
 };

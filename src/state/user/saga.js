@@ -25,7 +25,7 @@ function* login({
           username,
           token: user.token,
           createdAt: user.created_at,
-          updateAt: user.updated_at
+          updatedAt: user.updated_at
         }
       });
       Axios.defaults.headers.common.Authorization = user.token;
@@ -73,6 +73,30 @@ function* register({
   }
 }
 
+function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: () => {} }): Saga {
+  try {
+    yield put(commonActions.startLoading());
+    const data = yield call(apis.getUserProfile);
+    if (data) {
+      yield put({
+        type: actions.GET_USER_PROFILE_SUCCESS,
+        payload: {
+          phoneNumber: data.phone_number,
+          address: data.address,
+          fullname: data.fullname,
+          id: data.id,
+          email: data.email
+        }
+      });
+      cb(true);
+    }
+    cb(false);
+    yield put(commonActions.endLoading());
+  } catch (error) {
+    yield put(commonActions.endLoading());
+  }
+}
+
 function* logOut({ cb }: { cb: (isSuccess: boolean) => void }): Saga {
   try {
     yield put(commonActions.startLoading());
@@ -87,7 +111,42 @@ function* logOut({ cb }: { cb: (isSuccess: boolean) => void }): Saga {
     }
     yield put(commonActions.endLoading());
   } catch (error) {
-    console.log('xxx', error);
+    cb(false);
+    yield put(commonActions.endLoading());
+  }
+}
+
+type UpdateUserProfileParam = {
+  fullname: string,
+  email: string,
+  phoneNumber: string,
+  address: String,
+  cb: (isSuccess: boolean) => void
+};
+function* updateUserProfile({
+  fullname, email, phoneNumber, address, cb
+}: UpdateUserProfileParam) {
+  try {
+    yield put(commonActions.startLoading());
+    const data = yield call(apis.updateUserProfile, fullname, address, email, phoneNumber);
+    if (data) {
+      yield put({
+        type: actions.GET_USER_PROFILE_SUCCESS,
+        payload: {
+          phoneNumber: data.phone_number,
+          address: data.address,
+          fullname: data.fullname,
+          email: data.email,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
+        }
+      });
+      cb(true);
+    } else {
+      cb(false);
+    }
+    yield put(commonActions.endLoading());
+  } catch (error) {
     cb(false);
     yield put(commonActions.endLoading());
   }
@@ -97,4 +156,6 @@ export default function* userSaga(): Saga {
   yield takeEvery(actions.LOGIN, login);
   yield takeEvery(actions.REGISTER, register);
   yield takeEvery(actions.LOG_OUT, logOut);
+  yield takeEvery(actions.GET_USER_PROFILE, getUserProfile);
+  yield takeEvery(actions.UPDATE_USER_PROFILE, updateUserProfile);
 }

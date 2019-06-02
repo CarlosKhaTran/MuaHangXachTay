@@ -16,10 +16,10 @@ export default ({ style }: { style: Style } = { style: {} }) => (
 
 const styles = StyleSheet.create({
   container: {
-    height: measures.defaultUnit * 10,
+    height: measures.defaultUnit * 6,
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 0,
-  },
+    zIndex: 0
+  }
 });

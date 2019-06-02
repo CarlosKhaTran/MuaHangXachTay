@@ -8,14 +8,14 @@ class LoadingComponent extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      show: false
     };
     instance = this;
   }
 
   hide() {
     this.setState({
-      show: false,
+      show: false
     });
   }
 
@@ -23,12 +23,12 @@ class LoadingComponent extends PureComponent {
     const { show } = this.state;
     if (!show) {
       this.setState({
-        show: true,
+        show: true
       });
     }
   }
 
-  animation: any
+  animation: any;
 
   render() {
     const { show } = this.state;
@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: colors.overlay,
-    zIndex: 2,
+    zIndex: 2
   },
   lottie: {
-    transform: [{ scale: 0.8 }],
+    transform: [{ scale: 0.6 }]
   },
   waitingText: {
     ...defaultStyles.text,
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     top: 100,
     alignSelf: 'center',
     fontSize: measures.fontSizeLarge * 1.2,
-    color: colors.lookup,
-  },
+    color: colors.lookup
+  }
 });
 
 const Loading = {
@@ -84,7 +84,7 @@ const Loading = {
     if (instance !== null) {
       instance.hide();
     }
-  },
+  }
 };
 
 export default Loading;

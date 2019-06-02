@@ -7,6 +7,11 @@ const initState = {
 
 export default (state: Object = initState, action: Object) => {
   switch (action.type) {
+    case actions.GET_USER_PROFILE_SUCCESS:
+      return {
+        ...state,
+        ...action.payload
+      };
     case actions.LOG_OUT_SUCCESS:
       return {
         ...state,

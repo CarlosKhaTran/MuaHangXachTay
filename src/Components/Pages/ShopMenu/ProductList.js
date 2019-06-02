@@ -17,7 +17,7 @@ type Props = {
 type State = {
 };
 
-export class Menu extends React.Component<Props, State> {
+export class Products extends React.Component<Props, State> {
   state = {
   };
 
@@ -68,8 +68,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => ({
   getProductList: () => dispatch(actions.getProductList()),
 });
+const ProductList = connect(mapStateToProps, mapDispatchToProps)(Products);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Menu);
+export default ProductList;
 
 const styles = StyleSheet.create({
   container: {

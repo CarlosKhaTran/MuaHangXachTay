@@ -3,23 +3,26 @@ import React, { Component } from 'react';
 import {
   View, FlatList, Text, StyleSheet, TouchableOpacity
 } from 'react-native';
+import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
-import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationScreenProp } from 'react-navigation';
 import {
   Container, Header, ExtraHeader, Icon
-} from '../Widgets';
-import { defaultStyles, measures, colors } from '../../assets';
-import { SCREENS } from '../../routers';
+} from 'Components/Widgets';
+import { defaultStyles, measures, colors } from 'assets';
+import { SCREENS } from 'routers';
+import { actions } from 'state';
+import { Bell } from 'Components/Layouts';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<{}>,
+  notiList: Array<Noti>,
+  seenList: { [string]: boolean },
+  deleteList: { [string]: boolean },
+  seenNoti: (id: string) => void,
+  deleteNoti: (id: string) => void
 };
-type State = {
-  notifications: Array<Noti>,
-  deleteStore: { [string]: boolean },
-  seenStore: { [string]: boolean }
-};
+type State = {};
 
 type Noti = {
   product: string,
@@ -31,36 +34,10 @@ type Noti = {
   link: ?string
 };
 
-export default class Notification extends Component<Props, State> {
-  state = {
-    notifications: [],
-    deleteStore: {},
-    seenStore: {}
-  };
-
-  async componentDidMount() {
-    const deleteStore = (await AsyncStorage.getItem('deleteStore')) || '{}';
-    const seenStore = (await AsyncStorage.getItem('seenStore')) || '{}';
-    this.setState(
-      {
-        deleteStore: JSON.parse(deleteStore),
-        seenStore: JSON.parse(seenStore)
-      },
-      this.prepareData
-    );
-  }
-
-  prepareData = async () => {
-    const { navigation } = this.props;
-    const allNoti = navigation.getParam('notifications');
-    this.setState({
-      notifications: allNoti
-    });
-  };
-
+export class Notification extends Component<Props, State> {
   onBack = () => {
     const { navigation } = this.props;
-    navigation.navigate(SCREENS.SHOP_MENU)
+    navigation.navigate(SCREENS.SHOP_MENU);
   };
 
   getColor = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {
@@ -74,44 +51,12 @@ export default class Notification extends Component<Props, State> {
     }
   };
 
-  onDelete = (item: Noti) => {
-    const { deleteStore } = this.state;
-    this.setState({
-      deleteStore: {
-        ...deleteStore,
-        [item.id]: true
-      }
-    });
-    AsyncStorage.setItem(
-      'deleteStore',
-      JSON.stringify({
-        ...deleteStore,
-        [item.id]: true
-      })
-    );
-  };
-
   onOpen = (item: Noti) => {
-    const { seenStore } = this.state;
-    const { navigation } = this.props;
+    const { navigation, seenNoti } = this.props;
     const {
       product, number, url, link
     } = item;
-    if (!item.seen) {
-      this.setState({
-        seenStore: {
-          ...seenStore,
-          [item.id]: true
-        }
-      });
-      AsyncStorage.setItem(
-        'seenStore',
-        JSON.stringify({
-          ...seenStore,
-          [item.id]: true
-        })
-      );
-    }
+    seenNoti(item.id);
     navigation.navigate({
       routeName: SCREENS.PRODUCT,
       key: SCREENS.PRODUCT,
@@ -144,7 +89,7 @@ export default class Notification extends Component<Props, State> {
           text: 'Delete',
           backgroundColor: colors.transparent,
           color: colors.red,
-          onPress: () => this.onDelete(item)
+          onPress: () => this.props.deleteNoti(item.id)
         }
       ]}
     >
@@ -173,24 +118,25 @@ export default class Notification extends Component<Props, State> {
     </Swipeout>
   );
 
+  handleRightButton = () => {}
+
   render() {
-    const { notifications, deleteStore, seenStore } = this.state;
-    const data = notifications
+    const { notiList, deleteList, seenList } = this.props;
+    const data = notiList
       .map(item => ({
         ...item,
-        seen: seenStore[item.id] || false
+        seen: seenList[item.id] || false
       }))
-      .filter(item => !deleteStore[item.id]);
+      .filter(item => !deleteList[item.id]);
     return (
       <Container>
-        <Header title="THÔNG BÁO" handleLeftButton={this.onBack} />
+        <Header title="THÔNG BÁO" handleLeftButton={this.onBack} rightIcon={<Bell />} handleRightButton={this.handleRightButton} />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
           <FlatList
             contentContainerStyle={styles.content}
             data={data}
             renderItem={this.renderItem}
-            extraData={this.state}
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
@@ -199,11 +145,25 @@ export default class Notification extends Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ notiState }) => ({
+  notiList: notiState.notiList,
+  seenList: notiState.seenList,
+  deleteList: notiState.deleteList
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  seenNoti: (id: string) => dispatch(actions.seenNoti(id)),
+  deleteNoti: (id: string) => dispatch(actions.deleteNoti(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notification);
+
 const styles = StyleSheet.create({
   content: {
     marginHorizontal: measures.marginMedium,
     marginBottom: measures.marginMedium,
     backgroundColor: colors.white,
+    borderRadius: measures.borderRadius,
     ...defaultStyles.shadow
   },
   rowContainer: {

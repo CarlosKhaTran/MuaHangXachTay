@@ -106,15 +106,7 @@ export class Drawer extends React.PureComponent<Props, State> {
     } else {
       phoneNumber = `tel:${PHONE_NUMBER}`;
     }
-    Linking.canOpenURL(phoneNumber)
-      .then((supported) => {
-        if (!supported) {
-          Alert.alert('Phone number is not available');
-        } else {
-          Linking.openURL(phoneNumber);
-        }
-      })
-      .catch(err => console.log(err));
+    Linking.openURL(phoneNumber);
   };
 
   callBack = (isSuccess: boolean) => {
@@ -125,12 +117,29 @@ export class Drawer extends React.PureComponent<Props, State> {
       return;
     }
     Alert.show('Opps!', 'Có vấn đề xảy ra. không thể đăng xuất');
-  }
+  };
 
   signOut = () => {
     const { logOut } = this.props;
     logOut(this.callBack);
-  }
+  };
+
+  renderAvarta = () => {
+    const { isLogIn, fullname, username } = this.props;
+    if (isLogIn) {
+      const firstLetter = (fullname || username)[0].toUpperCase();
+      return (
+        <View style={[styles.avartaContainer, { justifyContent: 'center' }]}>
+          <Text style={styles.firstLetter}>{firstLetter}</Text>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.avartaContainer}>
+        <Image source={require('assets/images/ic_launcher.png')} style={[styles.logo]} />
+      </View>
+    );
+  };
 
   render() {
     const { isLogIn, fullname, username } = this.props;
@@ -142,12 +151,26 @@ export class Drawer extends React.PureComponent<Props, State> {
           resizeMode="stretch"
           source={require('assets/images/header.png')}
         >
-          <View style={styles.avartaContainer}>
-            <Image source={require('assets/images/ic_launcher.png')} style={[styles.logo]} />
-          </View>
+          {this.renderAvarta()}
           <View style={styles.headerContent}>
             <Text style={styles.title}>HTH: MUA HÀNG XÁCH TAY</Text>
-            <Text style={styles.intro}>{isLogIn ? `Xin chào: ${(fullname || username)}` : 'Đăng nhập ngay!'}</Text>
+            <Text style={styles.intro}>
+              {isLogIn ? `Xin chào: ${fullname || username}` : 'Đăng nhập ngay!'}
+            </Text>
+            {isLogIn && (
+              <TouchableOpacity
+                style={styles.editButtonProfile}
+                onPress={() => this.navigate(SCREENS.PROFILE)}
+              >
+                <Icon
+                  name="fountain-pen-tip"
+                  type="mdc"
+                  color={colors.sharl}
+                  size={measures.defaultUnit * 2}
+                />
+                <Text style={styles.editProfile}>Chỉnh sửa hồ sơ</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ImageBackground>
         <ScrollView>
@@ -187,14 +210,18 @@ export class Drawer extends React.PureComponent<Props, State> {
             title={isLogIn ? 'Đăng xuất' : 'Đăng nhập'}
             onPress={isLogIn ? this.signOut : () => this.navigate(SCREENS.LOG_IN)}
           >
-            <Icon name="md-log-in" style={styles.actionButtonIcon} color={isLogIn ? colors.primaryColor : colors.white} />
+            <Icon
+              name="md-log-in"
+              style={styles.actionButtonIcon}
+              color={isLogIn ? colors.primaryColor : colors.white}
+            />
           </ActionButton.Item>
           <ActionButton.Item
             shadowStyle={styles.shadowStyle}
             hideLabelShadow
             buttonColor={colors.tree}
             title="Liên hệ trực tiếp"
-            onPress={() => {}}
+            onPress={this.onPressCall}
           >
             <Icon name="md-call" style={styles.actionButtonIcon} color={colors.white} />
           </ActionButton.Item>
@@ -211,16 +238,19 @@ const mapStateToProps = ({ userState }) => {
   const isLogIn = checkLogin(token, createdAt);
   return {
     isLogIn,
-    username,
-    fullname
+    username: username || '',
+    fullname: fullname || ''
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  logOut: (cb: (isSuccess: boolean) => void) => dispatch(actions.logOut(cb)),
+  logOut: (cb: (isSuccess: boolean) => void) => dispatch(actions.logOut(cb))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Drawer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Drawer);
 
 const styles = StyleSheet.create({
   shadowStyle: {
@@ -240,6 +270,7 @@ const styles = StyleSheet.create({
     height: measures.defaultUnit * 9,
     width: measures.defaultUnit * 9,
     marginLeft: measures.marginMedium,
+    backgroundColor: colors.spray,
     borderRadius: measures.defaultUnit * 4.5,
     justifyContent: 'flex-end',
     alignSelf: 'center',
@@ -249,7 +280,7 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     marginLeft: measures.marginSmall,
-    paddingTop: measures.paddingLong
+    marginTop: measures.marginMedium
   },
   title: {
     ...defaultStyles.text,
@@ -294,5 +325,28 @@ const styles = StyleSheet.create({
   },
   airport: {
     opacity: 0.6
+  },
+  firstLetter: {
+    ...defaultStyles.text,
+    fontSize: measures.fontSizeHuge,
+    fontWeight: '600',
+    color: colors.white
+  },
+  editButtonProfile: {
+    marginTop: measures.marginSmall,
+    height: measures.defaultUnit * 3,
+    backgroundColor: colors.smoke,
+    marginRight: measures.defaultUnit * 6,
+    borderWidth: 1,
+    borderColor: colors.white,
+    borderRadius: measures.defaultUnit * 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  editProfile: {
+    ...defaultStyles.text,
+    fontSize: measures.fontSizeSmall,
+    color: colors.sharl
   }
 });

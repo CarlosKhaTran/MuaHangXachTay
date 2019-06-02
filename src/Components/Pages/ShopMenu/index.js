@@ -1,31 +1,34 @@
 // @flow
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
+import DeviceInfo from 'react-native-device-info';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import { Container, Header, Icon } from 'Components/Widgets';
+import {
+  Container, Header, Icon, ExtraHeader
+} from 'Components/Widgets';
 import { defaultStyles, measures, colors } from 'assets';
+import { Bell } from 'Components/Layouts';
 import SCREENS from 'routers/screens';
-import Menu from './Menu';
+import ProductList from './ProductList';
 import ShoppingCart from './ShoppingCart';
 
 type Props = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<{}>,
+  notiCount: number
 };
 type State = {
-  notiCount: number,
   index: number,
   routes: Array<{ title: string, key: string }>
 };
 
 export default class ShopMenu extends Component<Props, State> {
   state: State = {
-    notiCount: 0,
     index: 0,
     routes: [{ key: 'first', title: 'MENU' }, { key: 'second', title: 'YÊU CẦU' }]
   };
 
-  Menu = <Menu />;
+  MenuPage = <ProductList />;
 
   onOpenNotification = () => {
     const { navigation } = this.props;
@@ -47,27 +50,6 @@ export default class ShopMenu extends Component<Props, State> {
 
   willBlurSubscription: any;
 
-  renderBell = () => {
-    const { notiCount } = this.state;
-    switch (notiCount) {
-      case 0:
-        return (
-          <View>
-            <Icon name="bell" type="ent" color={colors.gray} />
-          </View>
-        );
-      default:
-        return (
-          <View>
-            <Icon name="bell" type="ent" color={colors.mango} />
-            <View style={styles.bellIcon}>
-              <Text style={styles.bagdeText}>{notiCount}</Text>
-            </View>
-          </View>
-        );
-    }
-  };
-
   renderMenu = () => (
     <View>
       <Icon name="hamburger" type="mdc" color={colors.white} />
@@ -79,12 +61,15 @@ export default class ShopMenu extends Component<Props, State> {
       {...props}
       indicatorStyle={{ backgroundColor: 'white' }}
       labelStyle={{ fontWeight: 'bold' }}
-      style={{ backgroundColor: colors.transparent, height: 40 }}
+      style={{
+        backgroundColor: colors.lightPrimaryColor,
+        height: measures.defaultUnit * (!DeviceInfo.hasNotch() ? 6 : 8)
+      }}
     />
   );
 
   renderTabView = () => SceneMap({
-    first: () => this.Menu,
+    first: () => this.MenuPage,
     second: () => <ShoppingCart navigation={this.props.navigation} />
   });
 
@@ -96,23 +81,27 @@ export default class ShopMenu extends Component<Props, State> {
           leftIcon={this.renderMenu()}
           handleLeftButton={this.openDrawer}
           title="Hand To Hand"
-          rightIcon={this.renderBell()}
+          rightIcon={<Bell />}
           handleRightButton={this.onOpenNotification}
         />
-        <View style={styles.body} />
-        <TabView
-          navigationState={{
-            index,
-            routes
-          }}
-          lazy
-          /* $FlowFixMe */
-          renderScene={this.renderTabView()}
-          renderTabBar={this.renderTabBar}
-          onIndexChange={idx => this.setState({ index: idx })}
-          initialLayout={{ width: measures.width }}
-          style={styles.body}
-        />
+        <View style={defaultStyles.fill}>
+          <ExtraHeader />
+
+          <TabView
+            navigationState={{
+              index,
+              routes
+            }}
+            lazy
+            tabBarPosition="bottom"
+            /* $FlowFixMe */
+            renderScene={this.renderTabView()}
+            renderTabBar={this.renderTabBar}
+            onIndexChange={idx => this.setState({ index: idx })}
+            initialLayout={{ width: measures.width }}
+            style={styles.body}
+          />
+        </View>
       </Container>
     );
   }
@@ -122,21 +111,4 @@ const styles = StyleSheet.create({
   body: {
     marginTop: -20
   },
-  bellIcon: {
-    position: 'absolute',
-    top: -measures.defaultUnit + 3,
-    left: measures.defaultUnit * 2,
-    width: measures.defaultUnit * 2,
-    height: measures.defaultUnit * 2,
-    borderRadius: measures.defaultUnit,
-    backgroundColor: colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  bagdeText: {
-    ...defaultStyles.text,
-    fontWeight: 'bold',
-    fontSize: measures.fontSizeSmall,
-    color: colors.rose
-  }
 });

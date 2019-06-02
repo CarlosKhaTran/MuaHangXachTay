@@ -133,7 +133,7 @@ export default class Header extends Component<Props, State> {
         style={[
           styles.container,
           DeviceInfo.hasNotch() && {
-            height: measures.defaultUnit * 18,
+            height: measures.defaultUnit * 18
           }
         ]}
       >
@@ -180,7 +180,7 @@ export default class Header extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   container: {
-    height: measures.defaultUnit * 15,
+    height: measures.defaultUnit * 13,
     backgroundColor: colors.primaryColor,
     zIndex: 0
   },

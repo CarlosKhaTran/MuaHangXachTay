@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: measures.marginLong,
+    top: measures.marginLong * 1.5,
     left: measures.marginMedium,
     height: measures.defaultUnit * 4.5,
     width: measures.defaultUnit * 4.5,

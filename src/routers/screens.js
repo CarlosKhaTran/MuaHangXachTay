@@ -11,5 +11,6 @@ export default {
   CONTACT: 'CONTACT',
   SETTING: 'SETTING',
   REGISTER: 'REGISTER',
+  PROFILE: 'PROFILE',
   LOG_IN: 'LOG_IN'
 };

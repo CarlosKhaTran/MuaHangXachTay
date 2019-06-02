@@ -25,9 +25,6 @@ const stack = createFluidNavigator(
     [SCREENS.ADMIN_LOGIN]: {
       screen: pages.AdminLogin
     },
-    [SCREENS.ADMIN]: {
-      screen: pages.Admin
-    },
     [SCREENS.PRODUCT]: {
       screen: pages.Product
     },
@@ -40,6 +37,9 @@ const stack = createFluidNavigator(
     [SCREENS.CONTACT]: {
       screen: pages.Contact
     },
+    [SCREENS.ADMIN]: {
+      screen: pages.Admin
+    },
     [SCREENS.SETTING]: {
       screen: pages.Setting
     },
@@ -48,6 +48,9 @@ const stack = createFluidNavigator(
     },
     [SCREENS.LOG_IN]: {
       screen: pages.LogIn
+    },
+    [SCREENS.PROFILE]: {
+      screen: pages.Profile
     }
   },
   {

@@ -75,7 +75,6 @@ function* register({
 
 function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: () => {} }): Saga {
   try {
-    yield put(commonActions.startLoading());
     const data = yield call(apis.getUserProfile);
     if (data) {
       yield put({
@@ -89,11 +88,11 @@ function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: ()
         }
       });
       cb(true);
+      return;
     }
     cb(false);
-    yield put(commonActions.endLoading());
   } catch (error) {
-    yield put(commonActions.endLoading());
+    cb(false);
   }
 }
 

@@ -42,7 +42,7 @@ class LoadingComponent extends PureComponent {
             this.animation = animation;
           }}
           style={styles.lottie}
-          source={require('../../assets/loading.json')}
+          source={require('assets/loading.json')}
           autoPlay
         />
       </View>

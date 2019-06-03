@@ -20,9 +20,12 @@ type Props = {
   seenList: { [string]: boolean },
   deleteList: { [string]: boolean },
   seenNoti: (id: string) => void,
-  deleteNoti: (id: string) => void
+  deleteNoti: (id: string) => void,
+  getAllNoti: (cb: Function) => void
 };
-type State = {};
+type State = {
+  refreshing: boolean,
+};
 
 type Noti = {
   product: string,
@@ -35,9 +38,16 @@ type Noti = {
 };
 
 export class Notification extends Component<Props, State> {
+  state = {
+    refreshing: false,
+  }
+
   onBack = () => {
     const { navigation } = this.props;
-    navigation.navigate(SCREENS.SHOP_MENU);
+    navigation.navigate({
+      routeName: SCREENS.SHOP_MENU,
+      key: SCREENS.SHOP_MENU
+    });
   };
 
   getColor = (color: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE') => {
@@ -120,8 +130,19 @@ export class Notification extends Component<Props, State> {
 
   handleRightButton = () => {}
 
+  callBack = () => this.setState(state => ({
+    refreshing: !state.refreshing,
+  }))
+
+  onRefresh = () => {
+    const { getAllNoti } = this.props;
+    this.callBack();
+    getAllNoti(this.callBack);
+  }
+
   render() {
     const { notiList, deleteList, seenList } = this.props;
+    const { refreshing } = this.state;
     const data = notiList
       .map(item => ({
         ...item,
@@ -134,10 +155,12 @@ export class Notification extends Component<Props, State> {
         <View style={defaultStyles.fill}>
           <ExtraHeader />
           <FlatList
+            refreshing={refreshing}
             contentContainerStyle={styles.content}
             data={data}
             renderItem={this.renderItem}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={this.onRefresh}
           />
         </View>
       </Container>
@@ -153,6 +176,7 @@ const mapStateToProps = ({ notiState }) => ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   seenNoti: (id: string) => dispatch(actions.seenNoti(id)),
+  getAllNoti: (cb: (done: boolean) => void) => dispatch(actions.getAllNoti(cb)),
   deleteNoti: (id: string) => dispatch(actions.deleteNoti(id))
 });
 

@@ -29,7 +29,7 @@ const Bell = React.memo(({ notiCount }: { notiCount: number }) => {
 const mapDispatchToProps = ({ notiState }) => {
   const { notiList, seenList, deleteList } = notiState;
   return {
-    notiCount: notiList.filter(item => !seenList[item.id] || !deleteList[item]).length
+    notiCount: notiList.filter(item => !seenList[item.id] && !deleteList[item.id]).length
   };
 };
 

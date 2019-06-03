@@ -3,13 +3,16 @@
 import type { Product } from 'utils/typeDefinition';
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavigationScreenProp } from 'react-navigation';
 import {
-  View, StyleSheet, FlatList, Text, Image
+  View, StyleSheet, FlatList, Text, Image, TouchableOpacity
 } from 'react-native';
 import { measures, defaultStyles, colors } from 'assets';
 import { actions } from 'state';
+import { SCREENS } from 'routers';
 
 type Props = {
+  navigation: NavigationScreenProp<{}>,
   getProductList: () => void,
   productList: Array<Product>,
 };
@@ -26,8 +29,22 @@ export class Products extends React.Component<Props, State> {
     getProductList();
   }
 
+  onPressItem = (item: Product) => {
+    const { navigation } = this.props;
+    navigation.navigate({
+      routeName: SCREENS.PRODUCT,
+      key: SCREENS.PRODUCT,
+      params: {
+        product: item.name,
+        number: item.price,
+        url: item.image_url,
+        link: ''
+      }
+    });
+  }
+
   renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.rowContainer}>
+    <TouchableOpacity style={styles.rowContainer} onPress={() => this.onPressItem(item)}>
       <Image source={{ uri: item.image_url }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
@@ -41,7 +58,7 @@ export class Products extends React.Component<Props, State> {
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   render() {

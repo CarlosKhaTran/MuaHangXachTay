@@ -3,8 +3,7 @@
 import React from 'react';
 import _ from 'lodash';
 import {
-  View, StyleSheet, Text, TouchableOpacity,
-  TextInput
+  View, StyleSheet, Text, TouchableOpacity, TextInput
 } from 'react-native';
 import Icon from './Icon';
 import { measures, colors, defaultStyles } from '../../assets';
@@ -24,25 +23,40 @@ type Props = {
   type: string,
   error: boolean,
   name: string,
-  onChangeValue: Function,
+  onChangeValue: Function
 };
 const renderAdjustButton = (onAdjust: ?Function, name: string) => (
   <View style={styles.adjustButtonContainer}>
-    <TouchableOpacity style={[defaultStyles.fill, { alignItem: 'center' }]} onPress={() => onAdjust && onAdjust(name, true)}>
+    <TouchableOpacity
+      style={[defaultStyles.fill, { alignItem: 'center' }]}
+      onPress={() => onAdjust && onAdjust(name, true)}
+    >
       <Icon type="ant" name="caretup" size={15} color={colors.gray} />
     </TouchableOpacity>
-    <TouchableOpacity style={[defaultStyles.fill, { justifyContent: 'flex-end' }]} onPress={() => onAdjust && onAdjust(name, false)}>
+    <TouchableOpacity
+      style={[defaultStyles.fill, { justifyContent: 'flex-end' }]}
+      onPress={() => onAdjust && onAdjust(name, false)}
+    >
       <Icon type="ant" name="caretdown" size={15} color={colors.gray} />
     </TouchableOpacity>
   </View>
 );
 export default ({
-  title, value, editEnabled, first,
-  onPress, placeHolder, multiline, iconName, adjustable, type, onAdjust,
+  title,
+  value,
+  editEnabled,
+  first,
+  onPress,
+  placeHolder,
+  multiline,
+  iconName,
+  adjustable,
+  type,
+  onAdjust,
   onChangeValue,
   keyboardType,
   error,
-  name,
+  name
 }: Props) => (
   <TouchableOpacity
     disabled={!editEnabled || !onPress}
@@ -55,13 +69,13 @@ export default ({
         switch (type) {
           case 'select':
             return _.isEmpty(value) ? (
-              <Text
-                style={[styles.rowPlaceHolder, { marginVertical: measures.marginSmall }]}
-              >
+              <Text style={[styles.rowPlaceHolder, { marginVertical: measures.marginSmall }]}>
                 {placeHolder}
               </Text>
             ) : (
-              <Text ellipsizeMode="tail" style={styles.rowDetail}>{value}</Text>
+              <Text ellipsizeMode="tail" style={styles.rowDetail}>
+                {value}
+              </Text>
             );
           default:
             return editEnabled ? (
@@ -72,13 +86,24 @@ export default ({
                 value={value}
                 keyboardType={keyboardType}
               />
-            )
-              : (<Text style={styles.textInput}>{value}</Text>);
+            ) : (
+              <Text style={styles.textInput}>{value}</Text>
+            );
         }
-      })()
-    }
+      })()}
     </View>
-    {!adjustable ? (editEnabled ? <Icon name={iconName || 'fountain-pen-tip'} type="mdc" color={colors.softRed} style={styles.icon} /> : null) : renderAdjustButton(onAdjust, name)}
+    {!adjustable ? (
+      editEnabled ? (
+        <Icon
+          name={iconName || 'fountain-pen-tip'}
+          type="mdc"
+          color={colors.softRed}
+          style={styles.icon}
+        />
+      ) : null
+    ) : (
+      renderAdjustButton(onAdjust, name)
+    )}
   </TouchableOpacity>
 );
 
@@ -91,14 +116,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.seperator,
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   rowMultiline: {
-    height: measures.defaultUnit * 17,
+    height: measures.defaultUnit * 17
   },
   titleContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   rowDetail: {
     ...defaultStyles.text,
@@ -106,14 +131,14 @@ const styles = StyleSheet.create({
     fontSize: measures.fontSizeLarge,
     marginLeft: measures.marginSmall,
     marginTop: measures.marginSmall,
-    marginBottom: measures.marginSmall,
+    marginBottom: measures.marginSmall
   },
   rowTitle: {
     ...defaultStyles.text,
-    color: colors.primaryColor,
+    color: colors.tree,
     fontSize: measures.fontSizeLarge + 1,
     marginLeft: measures.marginSmall,
-    marginTop: measures.marginSmall,
+    marginTop: measures.marginSmall
   },
   textInput: {
     ...defaultStyles.text,
@@ -121,13 +146,13 @@ const styles = StyleSheet.create({
     fontSize: measures.fontSizeLarge,
     marginLeft: measures.marginSmall,
     marginTop: measures.marginSmall,
-    paddingVertical: 0,
+    paddingVertical: 0
   },
   icon: {
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   adjustButtonContainer: {
     width: 30,
-    marginTop: measures.marginMedium,
-  },
+    marginTop: measures.marginMedium
+  }
 });

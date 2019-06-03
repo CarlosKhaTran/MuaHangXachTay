@@ -88,6 +88,7 @@ function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: ()
         }
       });
       cb(true);
+      yield put(actions.getUserProfile(() => {}));
       return;
     }
     cb(false);

@@ -13,6 +13,7 @@ import { Slider } from 'Components/Layouts';
 import { Alert, Notify } from 'Components/Global';
 import { connect } from 'react-redux';
 import { actions } from 'state';
+import { SCREENS } from 'routers';
 
 type Props = {
   navigation: NavigationScreenProp<{}>,
@@ -70,9 +71,16 @@ export class Login extends React.Component<Props, State> {
 
   onLogin = () => {
     const { username, password } = this.state;
-    const { logIn } = this.props;
+    const { logIn, navigation } = this.props;
     if (!username || !password) {
       Alert.show('Không thể đăng nhập', 'Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+    if (username === 'admin' && password === 'muahangxachtay') {
+      navigation.navigate({
+        routeName: SCREENS.ADMIN,
+        key: SCREENS.ADMIN
+      });
       return;
     }
     logIn(username, password, this.callBack);

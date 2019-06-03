@@ -165,8 +165,7 @@ export class Profile extends React.PureComponent<Props, State> {
               error={false}
               onChangeValue={this.onChangeValue}
               title="Email"
-              placeHolder="0901000000"
-              keyboardType="numeric"
+              placeHolder="example@gmail.com"
               value={this.getValue('email')}
               editEnabled={editEnabled}
             />

@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -39,12 +39,14 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>MHXT requires access to your phone’s camera to take a photo!</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>MHXT requires access to your location!</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>MHXT requires access to your location!</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save to Camera Roll</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>MHXT requires access to your gallery to choose product&apos;s image!</string>
+	<string>MHXT requires access to your gallery to choose product's image!</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

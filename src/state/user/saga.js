@@ -34,6 +34,7 @@ function* login({
       cb(false);
     }
     yield put(commonActions.endLoading());
+    yield put(actions.getUserProfile(() => {}));
   } catch (error) {
     cb(false);
     yield put(commonActions.endLoading());
@@ -63,6 +64,7 @@ function* register({
         }
       });
       cb(true);
+      yield put(actions.getUserProfile(() => {}));
     } else {
       cb(false);
     }
@@ -88,7 +90,6 @@ function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: ()
         }
       });
       cb(true);
-      yield put(actions.getUserProfile(() => {}));
       return;
     }
     cb(false);

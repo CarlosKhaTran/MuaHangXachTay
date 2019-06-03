@@ -17,7 +17,7 @@ type Props = {
 };
 type State = {};
 
-const PHONE = '+84792964277';
+const PHONE = '0918458416';
 
 export default class Contact extends Component<Props, State> {
   onBack = () => {

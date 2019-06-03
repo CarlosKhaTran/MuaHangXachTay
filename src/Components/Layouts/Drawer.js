@@ -22,7 +22,7 @@ import { checkLogin } from 'utils/common';
 import { actions } from 'state';
 import { Notify, Alert } from 'Components/Global';
 
-const PHONE_NUMBER = '0793964277';
+const PHONE_NUMBER = '0918458416';
 type Props = {
   navigation: NavigationScreenProp<{}>,
   isLogIn: boolean,

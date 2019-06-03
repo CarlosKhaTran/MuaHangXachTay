@@ -34,6 +34,7 @@ function* login({
       cb(false);
     }
     yield put(commonActions.endLoading());
+    yield put(actions.getUserProfile(() => {}));
   } catch (error) {
     cb(false);
     yield put(commonActions.endLoading());
@@ -63,6 +64,7 @@ function* register({
         }
       });
       cb(true);
+      yield put(actions.getUserProfile(() => {}));
     } else {
       cb(false);
     }
@@ -75,7 +77,6 @@ function* register({
 
 function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: () => {} }): Saga {
   try {
-    yield put(commonActions.startLoading());
     const data = yield call(apis.getUserProfile);
     if (data) {
       yield put({
@@ -89,11 +90,11 @@ function* getUserProfile({ cb }: { cb: (isSuccess: boolean) => void } = { cb: ()
         }
       });
       cb(true);
+      return;
     }
     cb(false);
-    yield put(commonActions.endLoading());
   } catch (error) {
-    yield put(commonActions.endLoading());
+    cb(false);
   }
 }
 

@@ -1,18 +1,21 @@
 // @flow
+import type { Notification, NotificationOpen } from 'react-native-firebase';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { NavigationScreenProp, StackActions, NavigationActions } from 'react-navigation';
+import firebase from 'react-native-firebase';
+import { NavigationScreenProp } from 'react-navigation';
 import LottieView from 'lottie-react-native';
 import { Container } from 'Components/Widgets';
 import { measures, colors } from 'assets';
 import { SCREENS } from 'routers';
 import { actions } from 'state';
+import { subscribeToTopic } from 'api';
 
 type Props = {
   navigation: NavigationScreenProp<{}>,
-  initApp: () => void
+  initApp: (cb: (haveNewNoti: boolean) => Promise<any>) => void
   // isReady: boolean,
 };
 type State = {};
@@ -20,37 +23,105 @@ type State = {};
 export class LoadingPage extends Component<Props, State> {
   state = {};
 
-  async componentDidMount() {
-    const { navigation, initApp } = this.props;
-    const notFirstTime = await AsyncStorage.getItem('notFirstTime');
-    initApp();
-    setTimeout(() => {
-      if (notFirstTime) {
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [
-            NavigationActions.navigate({
-              routeName: SCREENS.SHOP_MENU,
-              key: SCREENS.SHOP_MENU
-            })
-          ]
-        });
-        navigation.dispatch(resetAction);
-      } else {
-        navigation.navigate({
-          routeName: SCREENS.INTRO,
-          key: SCREENS.INTRO
-        });
-      }
-    }, 2000);
-    AsyncStorage.setItem('notFirstTime', 'true');
+  componentDidMount() {
+    this.requestFirebase();
+    this.onLoadDone();
   }
 
   componentWillUnmount() {
     this.lottie.reset();
   }
 
-  onLoadDone = () => {};
+  requestFirebase = async () => {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      // user has permissions\
+      const token = await firebase.messaging().getToken();
+      subscribeToTopic(token);
+      this.configFirebase();
+    } else {
+      try {
+        await firebase.messaging().requestPermission();
+        const token = await firebase.messaging().getToken();
+        subscribeToTopic(token);
+        firebase.messaging().subscribeToTopic('notification');
+        this.configFirebase();
+      } catch (error) {
+        // User has rejected permissions
+      }
+    }
+  };
+
+  configFirebase = () => {
+    const channel = new firebase.notifications.Android.Channel(
+      'channelId',
+      'Channel Name',
+      firebase.notifications.Android.Importance.Max
+    ).setDescription('A natural description of the channel');
+    firebase.notifications().android.createChannel(channel);
+    firebase.notifications().onNotification((notification: Notification) => {
+      if (Platform.OS === 'ios') {
+        const localNotification = new firebase.notifications.Notification()
+          .setNotificationId(notification.notificationId)
+          .setTitle(notification.title)
+          .setSubtitle(notification.subtitle)
+          .setBody(notification.body)
+          .setData(notification.data)
+          .ios.setBadge(notification.ios.badge);
+        firebase.notifications().displayNotification(localNotification);
+      } else {
+        const localNotification = new firebase.notifications.Notification()
+          .setNotificationId(notification.notificationId)
+          .setTitle(notification.title)
+          .setSubtitle(notification.subtitle)
+          .setBody(notification.body)
+          .setData(notification.data)
+          .android.setChannelId('channelId') // e.g. the id you chose above
+          .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+          .android.setAutoCancel(true)
+          .android.setPriority(firebase.notifications.Android.Priority.High);
+        firebase.notifications().displayNotification(localNotification);
+      }
+    });
+    firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+      const { navigation } = this.props;
+      const { _data } = notificationOpen.notification;
+      const {
+        product, number, url, link
+      } = _data;
+      navigation.navigate({
+        routeName: SCREENS.PRODUCT,
+        key: SCREENS.PRODUCT,
+        params: {
+          product,
+          number,
+          url,
+          link
+        }
+      });
+    });
+  };
+
+  decideWhereToGo = async (haveNewNoti: boolean) => {
+    const { navigation } = this.props;
+    let routeName;
+    const notFirstTime = await AsyncStorage.getItem('notFirstTime');
+    if (!notFirstTime) {
+      routeName = SCREENS.INTRO;
+    } else {
+      routeName = haveNewNoti ? SCREENS.NOTIFICATION : SCREENS.SHOP_MENU;
+    }
+    navigation.navigate({
+      routeName,
+      key: routeName
+    });
+    AsyncStorage.setItem('notFirstTime', 'true');
+  };
+
+  onLoadDone = async () => {
+    const { initApp } = this.props;
+    initApp(this.decideWhereToGo);
+  };
 
   navigate = (screenName: string) => {
     const { navigation } = this.props;
@@ -82,7 +153,7 @@ export class LoadingPage extends Component<Props, State> {
 }
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  initApp: () => dispatch(actions.initApp())
+  initApp: (cb: (haveNewNoti: boolean) => any) => dispatch(actions.initApp(cb))
 });
 
 export default connect(
@@ -93,7 +164,7 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    backgroundColor: colors.loadingBackground
+    backgroundColor: colors.lightPrimaryColor
   },
   animatedView: {
     height: 100,

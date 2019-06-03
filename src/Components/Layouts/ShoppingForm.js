@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 import {
   View,
   Alert,
@@ -17,28 +18,24 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ImagePicker from 'react-native-image-crop-picker';
 import { NavigationScreenProp } from 'react-navigation';
 import {
-  Content, Row, Button, Icon
+  Content, Row, Icon
 } from 'Components/Widgets';
 import { EditLayout } from 'Components/Layouts';
 import { defaultStyles, measures, colors } from 'assets';
-import { SCREENS } from 'routers';
 import { sendEmail } from 'api';
 import { Notify, Loading } from 'Components/Global';
 // import console = require('console');
 
 const requireCheck = ['name', 'number', 'phone', 'product'];
 
-type Noti = {
-  id: string,
-  product: string,
-  number: string,
-  seen: boolean,
-  type: 'NEW_PRODUCT' | 'BOOKING_SUCESS' | 'BOOKING_FALSE',
-  url?: string,
-  link?: string
-};
 type Props = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<{}>,
+  phone: string,
+  name: string,
+  address: string,
+  product: string,
+  price: string,
+  uri: string
 };
 type State = {
   name: string,
@@ -58,11 +55,10 @@ type State = {
   numberError: boolean,
   image: ?{
     uri: string,
-    type: string,
-    fileName: string
+    type?: string,
+    fileName?: string
   },
   loginAttempt: number,
-  notifications: Array<Noti>
 };
 const editConfig: any = {
   date: {
@@ -89,7 +85,7 @@ const editConfig: any = {
   }
 };
 
-export default class ShoppingCart extends Component<Props, State> {
+export class ShoppingForm extends Component<Props, State> {
   state: State = {
     name: '',
     phone: '',
@@ -108,8 +104,21 @@ export default class ShoppingCart extends Component<Props, State> {
     updateConfig: {},
     image: null,
     loginAttempt: 0,
-    notifications: []
   };
+
+  componentDidMount() {
+    const {
+      phone, name, address, product, price, uri,
+    } = this.props;
+    this.setState({
+      phone,
+      name,
+      address,
+      product,
+      cost: price,
+      image: uri ? { uri } : null
+    });
+  }
 
   onEnableEdit = (infoName: string) => {
     const { editEnabled } = this.state;
@@ -188,18 +197,6 @@ export default class ShoppingCart extends Component<Props, State> {
     }));
   };
 
-  onOpenNotification = () => {
-    const { navigation } = this.props;
-    const { notifications } = this.state;
-    navigation.navigate({
-      routeName: SCREENS.NOTIFICATION,
-      key: SCREENS.NOTIFICATION,
-      params: {
-        notifications
-      }
-    });
-  };
-
   onSelectImage = async (camera: boolean) => {
     const image: { path: string, mime: string, filename: string } = camera
       ? await ImagePicker.openCamera({
@@ -219,24 +216,6 @@ export default class ShoppingCart extends Component<Props, State> {
         fileName: image.filename
       }
     });
-  };
-
-  handleSecretAction = () => {
-    const { loginAttempt } = this.state;
-    const { navigation } = this.props;
-    if (loginAttempt === 10) {
-      this.setState({
-        loginAttempt: 0
-      });
-      navigation.navigate({
-        routeName: SCREENS.ADMIN_LOGIN,
-        key: SCREENS.ADMIN_LOGIN
-      });
-    } else {
-      this.setState({
-        loginAttempt: loginAttempt + 1
-      });
-    }
   };
 
   openAlert = () => {
@@ -259,54 +238,6 @@ export default class ShoppingCart extends Component<Props, State> {
   didFocusSubscription: any;
 
   willBlurSubscription: any;
-
-  renderBell = () => {
-    const { notiCount } = this.state;
-    switch (notiCount) {
-      case 0:
-        return (
-          <View>
-            <Icon name="bell" type="ent" color={colors.gray} />
-          </View>
-        );
-      default:
-        return (
-          <View>
-            <Icon name="bell" type="ent" color={colors.mango} />
-            <View
-              style={{
-                position: 'absolute',
-                top: -measures.defaultUnit + 3,
-                left: measures.defaultUnit * 2,
-                width: measures.defaultUnit * 2,
-                height: measures.defaultUnit * 2,
-                borderRadius: measures.defaultUnit,
-                backgroundColor: colors.lightGray,
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <Text
-                style={{
-                  ...defaultStyles.text,
-                  fontWeight: 'bold',
-                  fontSize: measures.fontSizeSmall,
-                  color: colors.rose
-                }}
-              >
-                {notiCount}
-              </Text>
-            </View>
-          </View>
-        );
-    }
-  };
-
-  renderMenu = () => (
-    <View>
-      <Icon name="hamburger" type="mdc" color={colors.white} />
-    </View>
-  );
 
   render() {
     const {
@@ -437,7 +368,6 @@ export default class ShoppingCart extends Component<Props, State> {
               />
             </View>
           </Content>
-          <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
         </KeyboardAwareScrollView>
         {editEnabled && (
           <EditLayout
@@ -446,10 +376,30 @@ export default class ShoppingCart extends Component<Props, State> {
             onHide={this.onEnableEdit}
           />
         )}
+        <TouchableOpacity style={styles.orderButton} onPress={this.onProcess}>
+          <Icon name="shoppingcart" type="ant" size={measures.iconSizeMedium} color={colors.white} />
+        </TouchableOpacity>
       </View>
     );
   }
 }
+
+const mapStateToProps = ({ userState }, { passedProduct }) => {
+  const { fullname, address, phoneNumber } = userState;
+  const { product, price, uri } = passedProduct;
+  return {
+    name: fullname || '',
+    address: address || '',
+    phone: phoneNumber || '',
+    product: product || '',
+    price: price ? price.toString() : '',
+    uri: uri || ''
+  };
+};
+
+export default connect(
+  mapStateToProps,
+)(ShoppingForm);
 
 const styles = StyleSheet.create({
   title: {
@@ -484,5 +434,24 @@ const styles = StyleSheet.create({
     bottom: measures.marginMedium,
     right: measures.marginMedium,
     ...defaultStyles.shadow
-  }
+  },
+  orderButton: {
+    width: measures.defaultUnit * 6,
+    height: measures.defaultUnit * 6,
+    borderRadius: measures.defaultUnit * 3,
+    backgroundColor: colors.lightPrimaryColor,
+    bottom: measures.marginMedium,
+    right: measures.marginMedium + measures.defaultUnit,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    paddingTop: measures.paddingSmall / 2,
+    shadowOpacity: 0.3,
+    elevation: 1,
+    shadowColor: colors.gray,
+    shadowOffset: {
+      width: 1,
+      height: 1
+    }
+  },
 });

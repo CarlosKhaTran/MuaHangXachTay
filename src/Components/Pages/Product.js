@@ -34,7 +34,8 @@ export default class Product extends Component<Props, State> {
       params: {
         product: this.product,
         price: this.price,
-        uri: this.uri
+        uri: this.uri,
+        link: this.link
       }
     });
   };
@@ -74,10 +75,7 @@ export default class Product extends Component<Props, State> {
   render() {
     return (
       <Container>
-        <Header
-          title="ĐƠN HÀNG"
-          handleLeftButton={this.onBack}
-        />
+        <Header title="ĐƠN HÀNG" handleLeftButton={this.onBack} />
         <View style={defaultStyles.fill}>
           <ExtraHeader />
           <ScrollView>
@@ -123,8 +121,8 @@ export default class Product extends Component<Props, State> {
                 </View>
               </Content>
             </Transition>
+            <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
           </ScrollView>
-          <Button block title="Đặt Hàng" type="primary" onPress={this.onProcess} />
         </View>
       </Container>
     );

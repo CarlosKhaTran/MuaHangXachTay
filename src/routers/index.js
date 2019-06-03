@@ -13,11 +13,14 @@ const stack = createFluidNavigator(
     [SCREENS.LOADING]: {
       screen: pages.Loading
     },
-    [SCREENS.INTRO]: {
-      screen: pages.Intro
+    [SCREENS.ADMIN]: {
+      screen: pages.Admin
     },
     [SCREENS.SHOPPING_CART]: {
       screen: pages.ShoppingCart
+    },
+    [SCREENS.INTRO]: {
+      screen: pages.Intro
     },
     [SCREENS.NOTIFICATION]: {
       screen: pages.Notification
@@ -36,9 +39,6 @@ const stack = createFluidNavigator(
     },
     [SCREENS.CONTACT]: {
       screen: pages.Contact
-    },
-    [SCREENS.ADMIN]: {
-      screen: pages.Admin
     },
     [SCREENS.SETTING]: {
       screen: pages.Setting

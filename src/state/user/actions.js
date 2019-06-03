@@ -15,7 +15,7 @@ const userActions = {
     type: userActions.LOGIN,
     username,
     password,
-    cb
+    cb: cb || (() => {})
   }),
   registerUser: (
     username: string,
@@ -25,15 +25,15 @@ const userActions = {
     type: userActions.REGISTER,
     username,
     password,
-    cb
+    cb: cb || (() => {})
   }),
   logOut: (cb?: (isSuccess: boolean) => void = () => {}) => ({
     type: userActions.LOG_OUT,
-    cb
+    cb: cb || (() => {})
   }),
-  getUserProfile: (cb?: (isSuccess: boolean) => void = () => {}) => ({
+  getUserProfile: (cb?: (isSuccess: boolean) => void) => ({
     type: userActions.GET_USER_PROFILE,
-    cb
+    cb: cb || (() => {})
   }),
   updateUserProfile: (
     fullname: string,
@@ -43,7 +43,7 @@ const userActions = {
     cb?: (isSuccess: boolean) => void = () => {}
   ) => ({
     type: userActions.UPDATE_USER_PROFILE,
-    cb,
+    cb: cb || (() => {}),
     fullname,
     phoneNumber,
     address,

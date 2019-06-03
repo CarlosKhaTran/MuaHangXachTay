@@ -14,7 +14,7 @@ export default (state: Object = initState, action: Object) => {
         ...state,
         seenList: {
           ...state.seenList,
-          [action.id]: !state.seenList[action.id]
+          [action.id]: true
         }
       };
     case actions.DELETE_NOTI:
@@ -22,7 +22,7 @@ export default (state: Object = initState, action: Object) => {
         ...state,
         deleteList: {
           ...state.deleteList,
-          [action.id]: !state.deleteList[action.id]
+          [action.id]: true
         }
       };
     case actions.GET_ALL_NOTI_SUCCESS:

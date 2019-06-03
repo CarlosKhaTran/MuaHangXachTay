@@ -140,7 +140,7 @@ export class Profile extends React.PureComponent<Props, State> {
             </View>
             <Row
               first
-              title="Họ tên (*)"
+              title="Họ tên"
               name="fullname"
               editEnabled={editEnabled}
               error={false}
@@ -153,7 +153,7 @@ export class Profile extends React.PureComponent<Props, State> {
               name="phoneNumber"
               error={false}
               onChangeValue={this.onChangeValue}
-              title="Số Điện Thoại (*)"
+              title="Số Điện Thoại"
               placeHolder="0901000000"
               keyboardType="numeric"
               value={this.getValue('phoneNumber')}
@@ -164,7 +164,7 @@ export class Profile extends React.PureComponent<Props, State> {
               name="email"
               error={false}
               onChangeValue={this.onChangeValue}
-              title="Số Điện Thoại (*)"
+              title="Email"
               placeHolder="0901000000"
               keyboardType="numeric"
               value={this.getValue('email')}

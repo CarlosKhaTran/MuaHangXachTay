@@ -5,8 +5,9 @@ const notiActions = {
   GET_ALL_NOTI_SUCCESS: 'GET_ALL_NOTI_SUCCESS',
   DELETE_NOTI: 'DELETE_NOTI',
   SEEN_NOTI: 'SEEN_NOTI',
-  getAllNoti: () => ({
-    type: notiActions.GET_ALL_NOTI
+  getAllNoti: (cb: (flag: boolean) => void) => ({
+    type: notiActions.GET_ALL_NOTI,
+    cb: cb || (() => {})
   }),
   deleteNoti: (id: string) => ({
     type: notiActions.DELETE_NOTI,

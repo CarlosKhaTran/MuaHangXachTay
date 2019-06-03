@@ -10,8 +10,9 @@ const commonActions = {
   endLoading: () => ({
     type: commonActions.END_LOADING
   }),
-  initApp: () => ({
-    type: commonActions.INIT_APP
+  initApp: (cb: (isSuccess: boolean) => void) => ({
+    type: commonActions.INIT_APP,
+    cb: cb || (() => {})
   })
 };
 

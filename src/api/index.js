@@ -29,7 +29,7 @@ export const sendEmail = async ({
   try {
     const url = urls.sendEmailUrl();
     const data: any = new FormData();
-    if (image) {
+    if (image && image.type) {
       data.append('image', {
         uri: image.uri,
         type: image.type,

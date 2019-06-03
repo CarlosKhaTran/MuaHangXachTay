@@ -8,10 +8,9 @@ import {
   Container, Header, Icon, ExtraHeader
 } from 'Components/Widgets';
 import { defaultStyles, measures, colors } from 'assets';
-import { Bell } from 'Components/Layouts';
+import { Bell, ShoppingForm } from 'Components/Layouts';
 import SCREENS from 'routers/screens';
 import ProductList from './ProductList';
-import ShoppingCart from './ShoppingCart';
 
 type Props = {
   navigation: NavigationScreenProp<{}>,
@@ -28,7 +27,7 @@ export default class ShopMenu extends Component<Props, State> {
     routes: [{ key: 'first', title: 'MENU' }, { key: 'second', title: 'YÊU CẦU' }]
   };
 
-  MenuPage = <ProductList />;
+  MenuPage = <ProductList navigation={this.props.navigation} />;
 
   onOpenNotification = () => {
     const { navigation } = this.props;
@@ -70,7 +69,7 @@ export default class ShopMenu extends Component<Props, State> {
 
   renderTabView = () => SceneMap({
     first: () => this.MenuPage,
-    second: () => <ShoppingCart navigation={this.props.navigation} />
+    second: () => <ShoppingForm navigation={this.props.navigation} passedProduct={{}} />
   });
 
   render() {
